@@ -103,6 +103,7 @@
             <div class="form-group">
                 <label>ශ්‍රේණිය (Grade):</label>
                 <select name="grade" id="user-grade">
+                    <option value="6">Grade 6</option>
                     <option value="7">Grade 7</option>
                     <option value="8">Grade 8</option>
                     <option value="9">Grade 9</option>
@@ -129,7 +130,7 @@
     <div id="play-screen" class="hidden">
         <div class="score-board">
             <span>Score: <span id="score">0</span></span>
-            <span>Grade: <span id="display-grade">7</span></span>
+            <span>Grade: <span id="display-grade">6</span></span>
         </div>
         <div class="timer-bar-bg">
             <div id="timer" class="timer-bar"></div>
@@ -186,7 +187,7 @@
 </div>
 
 <script>
-    // SUPABASE CONFIGURATION (CONFIUGRED WITH YOUR KEYS)
+    // SUPABASE CONFIGURATION
     const SUPABASE_URL = 'https://olbtmrccdghenxtzslgx.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_rsPQaFPm5F5RGmTqht7e7g_x6_KkiYa';
     
@@ -217,30 +218,40 @@
 
     let basicStep = 1, basicAnswer = true, score = 0, currentAnswer = true, timerInterval;
     const timeLimit = 3000;
-    let startTime, userName = "", userPhone = "", selectedGrade = "7", selectedType = "";
+    let startTime, userName = "", userPhone = "", selectedGrade = "6", selectedType = "";
 
     // LOAD LEADERBOARD ON START
     async function loadLeaderboard() {
         const listEl = document.getElementById('leaderboard-list');
-        const { data, error } = await supabaseClient
-            .from('leaderboard')
-            .select('*')
-            .order('score', { ascending: false })
-            .limit(5);
+        try {
+            const { data, error } = await supabaseClient
+                .from('leaderboard')
+                .select('*')
+                .order('score', { ascending: false })
+                .limit(5);
 
-        if (error || !data || data.length === 0) {
-            listEl.innerHTML = '<li class="leaderboard-item"><span>තවම Scores නැත. පළමුවැන්නා වෙන්න!</span></li>';
-            return;
+            if (error) {
+                console.error('Supabase fetch error:', error);
+                listEl.innerHTML = '<li class="leaderboard-item"><span>Leaderboard එක Load කිරීමට නොහැකි විය.</span></li>';
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                listEl.innerHTML = '<li class="leaderboard-item"><span>තවම Scores නැත. පළමුවැන්නා වෙන්න!</span></li>';
+                return;
+            }
+
+            listEl.innerHTML = '';
+            data.forEach((item, index) => {
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
+                listEl.innerHTML += `<li class="leaderboard-item">
+                    <span>${medal} ${item.name || 'Anonymous'} (Gr. ${item.grade || '-'})</span>
+                    <span><b>${item.score || 0} pts</b></span>
+                </li>`;
+            });
+        } catch (e) {
+            console.error('Unexpected error loading leaderboard:', e);
         }
-
-        listEl.innerHTML = '';
-        data.forEach((item, index) => {
-            let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
-            listEl.innerHTML += `<li class="leaderboard-item">
-                <span>${medal} ${item.name} (Gr. ${item.grade})</span>
-                <span><b>${item.score} pts</b></span>
-            </li>`;
-        });
     }
 
     loadLeaderboard();
@@ -269,7 +280,7 @@
         userName = document.getElementById('user-name').value;
         userPhone = document.getElementById('user-phone').value;
         if (!userName || !userPhone || userPhone.length < 9) {
-            alert("කරුණාකර නම සහ නිවැරදි WhatsApp අංකයක් ලබාදෙන්න!");
+            alert("කරුණාකර නම සහ නිවැරදි WhatsApp අංකය ලබාදෙන්න!");
             return;
         }
         selectedGrade = document.getElementById('user-grade').value;
@@ -329,10 +340,19 @@
 
         // SAVE SCORE TO SUPABASE LEADERBOARD
         if (score > 0 && userName) {
-            await supabaseClient.from('leaderboard').insert([
-                { name: userName, grade: selectedGrade, score: score }
-            ]);
-            loadLeaderboard();
+            try {
+                const { data, error } = await supabaseClient.from('leaderboard').insert([
+                    { name: userName, grade: selectedGrade, score: score }
+                ]);
+                if (error) {
+                    console.error("Supabase Save Error:", error);
+                } else {
+                    console.log("Score saved successfully!");
+                }
+            } catch (err) {
+                console.error("Save Exception:", err);
+            }
+            await loadLeaderboard();
         }
 
         let rank = "ගණිත ආධුනිකයා 📘";
