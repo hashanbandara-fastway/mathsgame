@@ -69,37 +69,43 @@
         </div>
     </div>
 
-    <!-- STEP 2: STUDENT DETAILS FORM -->
+    <!-- STEP 2: STUDENT DETAILS FORM (NETLIFY FORM ENABLED) -->
     <div id="info-screen" class="hidden">
         <h1>🎉 නියමයි!</h1>
         <p style="color: #cbd5e1; font-size: 14px;">ප්‍රධාන Game එකට යන්න විස්තර ලබාදෙන්න:</p>
         
-        <div class="form-group">
-            <label>ඔයාගේ WhatsApp අංකය:</label>
-            <input type="tel" id="user-phone" placeholder="07XXXXXXXX" required>
-        </div>
+        <form name="student-leads" method="POST" data-netlify="true" id="lead-form" onsubmit="event.preventDefault(); submitInfo();">
+            <input type="hidden" name="form-name" value="student-leads" />
+            
+            <div class="form-group">
+                <label>ඔයාගේ WhatsApp අංකය:</label>
+                <input type="tel" name="phone" id="user-phone" placeholder="07XXXXXXXX" required>
+            </div>
 
-        <div class="form-group">
-            <label>ශ්‍රේණිය (Grade):</label>
-            <select id="user-grade">
-                <option value="6">Grade 6 (6 වසර)</option>
-                <option value="7">Grade 7 (7 වසර)</option>
-                <option value="8">Grade 8 (8 වසර)</option>
-                <option value="9">Grade 9 (9 වසර)</option>
-                <option value="10">Grade 10 (10 වසර)</option>
-                <option value="11">Grade 11 (11 වසර - O/L)</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label>ශ්‍රේණිය (Grade):</label>
+                <select name="grade" id="user-grade">
+                    <option value="6">Grade 6 (6 වසර)</option>
+                    <option value="7">Grade 7 (7 වසර)</option>
+                    <option value="8">Grade 8 (8 වසර)</option>
+                    <option value="9">Grade 9 (9 වසර)</option>
+                    <option value="10">Grade 10 (10 වසර)</option>
+                    <option value="11">Grade 11 (11 වසර - O/L)</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label>සම්බන්ධ වන ආකාරය:</label>
-            <select id="user-type">
-                <option value="WAYGA - Minuwangoda (Physical Class)">මිනුවන්ගොඩ WAYGA (Physical)</option>
-                <option value="Online Class (Islandwide)">Online Class (ලංකාවටම)</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label>සම්බන්ධ වන ආකාරය:</label>
+                <select name="type" id="user-type">
+                    <option value="WAYGA - Minuwangoda (Physical Class)">මිනුවන්ගොඩ WAYGA (Physical)</option>
+                    <option value="Online Class (Islandwide)">Online Class (ලංකාවටම)</option>
+                </select>
+            </div>
 
-        <button class="btn-start" style="margin-top: 10px;" onclick="submitInfo()">Main Game එක Start කරන්න 🚀</button>
+            <input type="hidden" name="score" id="final-score-field" value="0" />
+
+            <button type="submit" class="btn-start" style="margin-top: 10px;">Main Game එක Start කරන්න 🚀</button>
+        </form>
     </div>
 
     <!-- STEP 3: MAIN GAME PLAY SCREEN -->
@@ -185,6 +191,14 @@
         selectedType = document.getElementById('user-type').value;
         document.getElementById('display-grade').innerText = selectedGrade;
 
+        // Submit form data to Netlify silently
+        let form = document.getElementById('lead-form');
+        let formData = new FormData(form);
+        fetch('/', {
+            method: 'POST',
+            body: formData
+        }).catch(error => console.log('Form submission error:', error));
+
         document.getElementById('info-screen').classList.add('hidden');
         document.getElementById('play-screen').classList.remove('hidden');
         
@@ -255,6 +269,7 @@
     function gameOver() {
         clearInterval(timerInterval);
         document.getElementById('final-score').innerText = score;
+        document.getElementById('final-score-field').value = score;
         document.getElementById('play-screen').classList.add('hidden');
         document.getElementById('over-screen').classList.remove('hidden');
     }
