@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths Love - Hashan Sir</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        .game-card { background: #1e293b; border: 2px solid #38bdf8; border-radius: 20px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .brand-header { background: rgba(56, 189, 248, 0.1); border-radius: 12px; padding: 12px; margin-bottom: 20px; border: 1px dashed #38bdf8; }
+        .brand-header h2 { margin: 0; color: #facc15; font-size: 20px; }
+        .brand-header p { margin: 5px 0 0 0; color: #cbd5e1; font-size: 13px; line-height: 1.4; }
+        h1 { margin: 10px 0; color: #38bdf8; font-size: 22px; }
+        .form-group { margin: 12px 0; text-align: left; }
+        .form-group label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px; }
+        input, select { padding: 10px; border-radius: 8px; border: 1px solid #38bdf8; background: #0f172a; color: white; font-size: 14px; width: 100%; }
+        .score-board { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 15px; color: #94a3b8; }
+        .timer-bar-bg { background: #334155; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
+        .timer-bar { background: #ef4444; height: 100%; width: 100%; transition: width 0.1s linear; }
+        .equation { font-size: 36px; font-weight: bold; margin: 15px 0 25px 0; letter-spacing: 1px; min-height: 50px; }
+        .btn-container { display: flex; gap: 15px; }
+        button { flex: 1; padding: 14px; font-size: 18px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: transform 0.1s; }
+        button:active { transform: scale(0.95); }
+        .btn-correct { background: #22c55e; color: white; }
+        .btn-wrong { background: #ef4444; color: white; }
+        .btn-start { background: #38bdf8; color: #0f172a; width: 100%; font-size: 18px; }
+        .btn-share { background: #25D366; color: white; width: 100%; margin-top: 10px; font-size: 15px; }
+        .btn-class { background: #facc15; color: #0f172a; width: 100%; margin-top: 10px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 12px; padding: 14px; border: none; }
+        .badge { display: inline-block; padding: 6px 15px; background: #38bdf8; color: #0f172a; border-radius: 20px; font-weight: bold; margin-top: 10px; font-size: 14px; }
+        .footer-promo { margin-top: 15px; padding-top: 12px; border-top: 1px solid #334155; font-size: 12px; color: #94a3b8; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <!-- Brand Header -->
+    <div class="brand-header">
+        <h2>Maths Love | ගණිතය</h2>
+        <p><b>හෂාන් බණ්ඩාර (Hashan Sir)</b><br>
+        📍 මිනුවන්ගොඩ - WAYGA | 🌐 ලංකාවටම - ONLINE</p>
+    </div>
+
+    <!-- STEP 1: BASIC WARM-UP TEST -->
+    <div id="basic-screen">
+        <h1>⚡ Basic Level Test</h1>
+        <p style="color: #cbd5e1; font-size: 13px;">මූලික ගණන් 3ට ඉක්මනින් උත්තර දෙන්න!</p>
+        <div class="score-board">
+            <span>Basic Question: <span id="basic-step">1</span>/3</span>
+        </div>
+        <div id="basic-equation" class="equation">...</div>
+        <div class="btn-container">
+            <button class="btn-correct" onclick="checkBasicAnswer(true)">TRUE ✔</button>
+            <button class="btn-wrong" onclick="checkBasicAnswer(false)">FALSE ✖</button>
+        </div>
+    </div>
+
+    <!-- STEP 2: STUDENT DETAILS FORM -->
+    <div id="info-screen" class="hidden">
+        <h1>🎉 නියමයි!</h1>
+        <p style="color: #cbd5e1; font-size: 14px;">ප්‍රධාන Game එකට යන්න විස්තර ලබාදෙන්න:</p>
+        
+        <div class="form-group">
+            <label>ඔයාගේ WhatsApp අංකය:</label>
+            <input type="tel" id="user-phone" placeholder="07XXXXXXXX" required>
+        </div>
+
+        <div class="form-group">
+            <label>ශ්‍රේණිය (Grade):</label>
+            <select id="user-grade">
+                <option value="6">Grade 6 (6 වසර)</option>
+                <option value="7">Grade 7 (7 වසර)</option>
+                <option value="8">Grade 8 (8 වසර)</option>
+                <option value="9">Grade 9 (9 වසර)</option>
+                <option value="10">Grade 10 (10 වසර)</option>
+                <option value="11">Grade 11 (11 වසර - O/L)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>සම්බන්ධ වන ආකාරය:</label>
+            <select id="user-type">
+                <option value="WAYGA - Minuwangoda (Physical Class)">මිනුවන්ගොඩ WAYGA (Physical)</option>
+                <option value="Online Class (Islandwide)">Online Class (ලංකාවටම)</option>
+            </select>
+        </div>
+
+        <button class="btn-start" style="margin-top: 10px;" onclick="submitInfo()">Main Game එක Start කරන්න 🚀</button>
+    </div>
+
+    <!-- STEP 3: MAIN GAME PLAY SCREEN -->
+    <div id="play-screen" class="hidden">
+        <div class="score-board">
+            <span>Score: <span id="score">0</span></span>
+            <span>Grade: <span id="display-grade">6</span></span>
+        </div>
+        <div class="timer-bar-bg">
+            <div id="timer" class="timer-bar"></div>
+        </div>
+        <div id="equation" class="equation">...</div>
+        <div class="btn-container">
+            <button class="btn-correct" onclick="checkAnswer(true)">TRUE ✔</button>
+            <button class="btn-wrong" onclick="checkAnswer(false)">FALSE ✖</button>
+        </div>
+    </div>
+
+    <!-- STEP 4: GAME OVER SCREEN -->
+    <div id="over-screen" class="hidden">
+        <h2>Game Over! 💥</h2>
+        <p style="font-size: 18px; margin: 5px 0;">ඔයාගේ Score එක: <b id="final-score" style="color: #38bdf8;">0</b></p>
+        <div id="rank-badge" class="badge">ගණිත ශූරයා</div>
+
+        <button class="btn-start" style="margin-top: 15px;" onclick="restartGame()">නැවත Play කරන්න 🔄</button>
+        <button class="btn-share" onclick="shareWhatsApp()">මිතුරන්ට Share කරන්න 📲</button>
+        <button class="btn-class" onclick="contactSir()">පන්ති සදහා සම්බන්ධ වෙන්න මෙතන ක්ලික් කරන්න 📚</button>
+    </div>
+
+    <!-- Footer Promo -->
+    <div class="footer-promo">
+        📞 WhatsApp: <b>077 6752918</b> | හෂාන් බණ්ඩාර (Hashan Sir)
+    </div>
+</div>
+
+<script>
+    let basicStep = 1;
+    let basicAnswer = true;
+
+    let score = 0;
+    let currentAnswer = true;
+    let timerInterval;
+    const timeLimit = 3000;
+    let startTime;
+    
+    let userPhone = "";
+    let selectedGrade = "6";
+    let selectedType = "";
+
+    generateBasicQuestion();
+
+    function generateBasicQuestion() {
+        document.getElementById('basic-step').innerText = basicStep;
+        let n1 = Math.floor(Math.random() * 10) + 1;
+        let n2 = Math.floor(Math.random() * 10) + 1;
+        let ans = n1 + n2;
+        
+        basicAnswer = Math.random() >= 0.5;
+        let shownAns = basicAnswer ? ans : ans + (Math.random() > 0.5 ? 1 : -1);
+        if(!basicAnswer && shownAns === ans) shownAns += 1;
+
+        document.getElementById('basic-equation').innerText = `${n1} + ${n2} = ${shownAns}`;
+    }
+
+    function checkBasicAnswer(userAns) {
+        if (basicStep < 3) {
+            basicStep++;
+            generateBasicQuestion();
+        } else {
+            document.getElementById('basic-screen').classList.add('hidden');
+            document.getElementById('info-screen').classList.remove('hidden');
+        }
+    }
+
+    function submitInfo() {
+        userPhone = document.getElementById('user-phone').value;
+        if (!userPhone || userPhone.length < 9) {
+            alert("කරුණාකර නිවැරදි WhatsApp අංකයක් ඇතුළත් කරන්න!");
+            return;
+        }
+
+        selectedGrade = document.getElementById('user-grade').value;
+        selectedType = document.getElementById('user-type').value;
+        document.getElementById('display-grade').innerText = selectedGrade;
+
+        document.getElementById('info-screen').classList.add('hidden');
+        document.getElementById('play-screen').classList.remove('hidden');
+        
+        score = 0;
+        document.getElementById('score').innerText = score;
+        nextQuestion();
+    }
+
+    function generateEquation() {
+        let isCorrect = Math.random() >= 0.5;
+        let displayStr = "";
+
+        if (selectedGrade === "6" || selectedGrade === "7") {
+            let n1 = Math.floor(Math.random() * 15) + 2;
+            let n2 = Math.floor(Math.random() * 10) + 1;
+            let ans = n1 + n2;
+            let shownAns = isCorrect ? ans : ans + 2;
+            displayStr = `${n1} + ${n2} = ${shownAns}`;
+        } else if (selectedGrade === "8" || selectedGrade === "9") {
+            let n1 = Math.floor(Math.random() * 9) + 2;
+            let n2 = Math.floor(Math.random() * 8) + 2;
+            let ans = n1 * n2;
+            let shownAns = isCorrect ? ans : ans + 3;
+            displayStr = `${n1} × ${n2} = ${shownAns}`;
+        } else {
+            let x = Math.floor(Math.random() * 8) + 1;
+            let b = x + 4;
+            let shownX = isCorrect ? x : x + 1;
+            displayStr = `x + 4 = ${b} නම්, x = ${shownX}`;
+        }
+
+        currentAnswer = isCorrect;
+        document.getElementById('equation').innerText = displayStr;
+    }
+
+    function nextQuestion() {
+        clearInterval(timerInterval);
+        generateEquation();
+        startTimer();
+    }
+
+    function startTimer() {
+        const timerEl = document.getElementById('timer');
+        timerEl.style.width = '100%';
+        startTime = Date.now();
+
+        timerInterval = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const remainingPercent = Math.max(0, 100 - (elapsedTime / timeLimit) * 100);
+            timerEl.style.width = remainingPercent + '%';
+
+            if (elapsedTime >= timeLimit) {
+                gameOver();
+            }
+        }, 50);
+    }
+
+    function checkAnswer(userAnswer) {
+        if (userAnswer === currentAnswer) {
+            score++;
+            document.getElementById('score').innerText = score;
+            nextQuestion();
+        } else {
+            gameOver();
+        }
+    }
+
+    function gameOver() {
+        clearInterval(timerInterval);
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('play-screen').classList.add('hidden');
+        document.getElementById('over-screen').classList.remove('hidden');
+    }
+
+    function restartGame() {
+        document.getElementById('over-screen').classList.add('hidden');
+        document.getElementById('play-screen').classList.remove('hidden');
+        score = 0;
+        document.getElementById('score').innerText = score;
+        nextQuestion();
+    }
+
+    function shareWhatsApp() {
+        const text = `මම Hashan Sirගේ Speed Math Challenge එකෙන් Grade ${selectedGrade} වලින් ලකුණු ${score}ක් ගත්තා! 🔥 ඔයාට පුළුවන්ද මාව පරද්දන්න? දැන්ම Play කරන්න: ${window.location.href}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function contactSir() {
+        const text = `හෂාන් සර්, මම Speed Math Game එක ප්ලේ කළා. 
+මගේ විස්තර:
+- Grade: ${selectedGrade}
+- WhatsApp Number: ${userPhone}
+- Class Preference: ${selectedType}
+- Game Score: ${score}
+
+මට ගණිතය පන්තියට සම්බන්ධ වෙන විස්තර ලබාදෙන්න.`;
+        window.open(`https://api.whatsapp.com/send?phone=94776752918&text=${encodeURIComponent(text)}`, '_blank');
+    }
+</script>
+</body>
+</html>
