@@ -3,67 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maths Love - Hashan Sir</title>
+    <title>Maths Love - Battle Arena | Hashan Sir</title>
+    <!-- Google Sinhala Font & Gaming Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
-        .game-card { background: #1e293b; border: 2px solid #38bdf8; border-radius: 20px; padding: 25px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; }
-        .brand-header { background: rgba(56, 189, 248, 0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px dashed #38bdf8; display: flex; flex-direction: column; align-items: center; }
-        .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #38bdf8; object-fit: cover; margin-bottom: 8px; }
-        .brand-header h2 { margin: 0; color: #facc15; font-size: 22px; }
-        .brand-header p { margin: 4px 0 0 0; color: #cbd5e1; font-size: 13px; }
-        h1, h2 { margin: 10px 0; color: #38bdf8; font-size: 20px; }
+        * { box-sizing: border-box; font-family: 'Noto Serif Sinhala', sans-serif; }
+        body { 
+            background: radial-gradient(circle at center, #1a0b2e 0%, #090d16 100%); 
+            color: #ffffff; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 15px; 
+            overflow-x: hidden;
+        }
+        .game-card { 
+            background: rgba(21, 29, 47, 0.95); 
+            border: 2px solid #ff00ff; 
+            border-radius: 20px; 
+            padding: 22px; 
+            width: 100%; 
+            max-width: 450px; 
+            text-align: center; 
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3), inset 0 0 15px rgba(0, 240, 255, 0.1); 
+            position: relative; 
+        }
+        .brand-header { 
+            background: rgba(0, 240, 255, 0.08); 
+            border-radius: 12px; 
+            padding: 12px; 
+            margin-bottom: 12px; 
+            border: 1px dashed #00f0ff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .profile-img { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #ff00ff; object-fit: cover; margin-bottom: 6px; box-shadow: 0 0 10px #ff00ff; }
+        .brand-header h2 { margin: 0; color: #ffd700; font-size: 20px; font-family: 'Rajdhani', sans-serif; }
+        .brand-header p { margin: 4px 0 0 0; color: #cbd5e1; font-size: 12px; line-height: 1.4; }
         
-        .leaderboard-box { background: #0f172a; border: 1px solid #facc15; border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left; }
-        .leaderboard-box h3 { color: #facc15; margin: 0 0 10px 0; font-size: 16px; text-align: center; border-bottom: 1px solid #334155; padding-bottom: 5px; }
-        .leaderboard-list { list-style: none; padding: 0; margin: 0; }
-        .leaderboard-item { display: flex; justify-content: space-between; padding: 6px 10px; font-size: 13px; border-bottom: 1px solid #1e293b; }
-        .leaderboard-item:nth-child(1) { color: #facc15; font-weight: bold; font-size: 14px; }
-        .leaderboard-item:nth-child(2) { color: #e2e8f0; font-weight: bold; }
-        .leaderboard-item:nth-child(3) { color: #cbd5e1; font-weight: bold; }
+        /* Gaming Leaderboard with Grade Tabs */
+        .leaderboard-box { background: #090d16; border: 1px solid #ffd700; border-radius: 12px; padding: 10px; margin-bottom: 15px; text-align: left; }
+        .leaderboard-box h3 { color: #ffd700; margin: 0 0 8px 0; font-size: 14px; text-align: center; border-bottom: 1px solid #22304a; padding-bottom: 4px; }
+        
+        .grade-tabs { display: flex; justify-content: space-between; margin-bottom: 8px; gap: 2px; }
+        .grade-tab { background: #151d2f; border: 1px solid #00f0ff; color: #00f0ff; padding: 4px 6px; font-size: 11px; border-radius: 5px; cursor: pointer; font-weight: bold; flex: 1; text-align: center; }
+        .grade-tab.active { background: #00f0ff; color: #090d16; box-shadow: 0 0 8px #00f0ff; }
 
-        .form-group { margin: 12px 0; text-align: left; }
-        .form-group label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px; }
-        input, select { padding: 10px; border-radius: 8px; border: 1px solid #38bdf8; background: #0f172a; color: white; font-size: 14px; width: 100%; }
+        .leaderboard-list { list-style: none; padding: 0; margin: 0; max-height: 110px; overflow-y: auto; }
+        .leaderboard-item { display: flex; justify-content: space-between; padding: 5px 8px; font-size: 12px; border-bottom: 1px solid #151d2f; }
+        .leaderboard-item:nth-child(1) { color: #ffd700; font-weight: bold; }
+
+        .form-group { margin: 10px 0; text-align: left; }
+        .form-group label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 3px; }
+        input, select { padding: 9px; border-radius: 8px; border: 1px solid #00f0ff; background: #090d16; color: white; font-size: 13px; width: 100%; outline: none; }
         
-        .score-board { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-bottom: 15px; color: #94a3b8; }
-        .timer-bar-bg { background: #334155; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
-        .timer-bar { background: #ef4444; height: 100%; width: 100%; transition: width 0.1s linear; }
-        .equation { font-size: 18px; font-weight: bold; margin: 15px 0 25px 0; color: #facc15; line-height: 1.5; white-space: pre-line; }
+        .score-board { display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-bottom: 10px; color: #94a3b8; }
+        .timer-bar-bg { background: #22304a; height: 8px; border-radius: 6px; overflow: hidden; margin-bottom: 18px; }
+        .timer-bar { background: #ff4757; height: 100%; width: 100%; transition: width 0.1s linear; }
         
-        .btn-container { display: flex; gap: 15px; }
-        button { flex: 1; padding: 12px; font-size: 16px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; }
-        .btn-correct { background: #22c55e; color: white; }
-        .btn-wrong { background: #ef4444; color: white; }
-        .btn-start { background: #38bdf8; color: #0f172a; width: 100%; font-size: 17px; margin-top: 10px; }
-        .btn-share { background: #25D366; color: white; width: 100%; margin-top: 10px; font-size: 15px; }
-        .btn-class { background: #facc15; color: #0f172a; width: 100%; margin-top: 10px; font-size: 15px; font-weight: bold; }
-        .btn-time { background: #6366f1; color: white; width: 100%; margin-top: 10px; font-size: 14px; }
+        .equation { font-size: 17px; font-weight: bold; margin: 12px 0 20px 0; color: #ffd700; line-height: 1.5; white-space: pre-line; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
         
-        .badge { display: inline-block; padding: 6px 15px; background: #38bdf8; color: #0f172a; border-radius: 20px; font-weight: bold; margin-top: 10px; font-size: 14px; }
-        .timetable-card { background: #0f172a; border: 1px solid #38bdf8; border-radius: 12px; padding: 15px; text-align: left; margin-top: 15px; font-size: 13px; color: #cbd5e1; max-height: 350px; overflow-y: auto; }
-        .timetable-card h3 { color: #facc15; margin-top: 0; font-size: 15px; text-align: center; border-bottom: 1px solid #334155; padding-bottom: 6px; }
-        .timetable-card ul { padding-left: 20px; margin: 5px 0 15px 0; }
-        .timetable-note { text-align: center; background: rgba(250, 204, 21, 0.1); border: 1px dashed #facc15; padding: 8px; border-radius: 8px; color: #facc15; font-size: 12px; margin-top: 10px; }
-        .footer-promo { margin-top: 15px; padding-top: 12px; border-top: 1px solid #334155; font-size: 12px; color: #94a3b8; }
+        .btn-container { display: flex; gap: 12px; }
+        button { flex: 1; padding: 11px; font-size: 15px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.96); }
+        .btn-correct { background: #2ed573; color: white; box-shadow: 0 0 10px rgba(46, 213, 115, 0.4); }
+        .btn-wrong { background: #ff4757; color: white; box-shadow: 0 0 10px rgba(255, 71, 87, 0.4); }
+        .btn-start { background: #00f0ff; color: #090d16; width: 100%; font-size: 16px; margin-top: 8px; box-shadow: 0 0 12px rgba(0, 240, 255, 0.5); }
+        .btn-share { background: #25D366; color: white; width: 100%; margin-top: 8px; font-size: 14px; }
+        .btn-class { background: #ffd700; color: #090d16; width: 100%; margin-top: 8px; font-size: 14px; font-weight: bold; }
+        .btn-time { background: #5352ed; color: white; width: 100%; margin-top: 8px; font-size: 13px; }
+        
+        /* Gaming Animations & Combo */
+        .badge { display: inline-block; padding: 5px 14px; background: #ff00ff; color: white; border-radius: 20px; font-weight: bold; margin-top: 8px; font-size: 13px; box-shadow: 0 0 10px #ff00ff; }
+        .combo-alert { color: #00ffff; font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: bold; height: 20px; margin-bottom: 5px; text-shadow: 0 0 5px #00ffff; }
+        
+        @keyframes popScore { 
+            0% { transform: scale(1); color: #ffd700; } 
+            50% { transform: scale(1.3); color: #2ed573; text-shadow: 0 0 15px #2ed573; } 
+            100% { transform: scale(1); color: #ffd700; } 
+        }
+        .pop-anim { animation: popScore 0.4s ease-out; }
+
+        .timetable-card { background: #090d16; border: 1px solid #00f0ff; border-radius: 12px; padding: 12px; text-align: left; margin-top: 10px; font-size: 12px; color: #cbd5e1; max-height: 320px; overflow-y: auto; }
+        .timetable-card h3 { color: #ffd700; margin-top: 0; font-size: 14px; text-align: center; border-bottom: 1px solid #22304a; padding-bottom: 5px; }
+        .timetable-card ul { padding-left: 18px; margin: 4px 0 12px 0; }
+        .timetable-note { text-align: center; background: rgba(255, 215, 0, 0.08); border: 1px dashed #ffd700; padding: 6px; border-radius: 6px; color: #ffd700; font-size: 11px; margin-top: 8px; }
+        .footer-promo { margin-top: 12px; padding-top: 10px; border-top: 1px solid #22304a; font-size: 11px; color: #94a3b8; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="game-card">
+<div class="game-card" id="game-card-wrapper">
     <div class="brand-header">
-        <!-- Replace sir.jpg with actual image link if needed -->
-        <img src="https://via.placeholder.com/80" alt="Hashan Sir" class="profile-img">
-        <h2>Maths Love | ගණිතය</h2>
+        <img src="sir.jpg" alt="Hashan Sir" class="profile-img">
+        <h2>MATHS BATTLE ARENA</h2>
         <p><b>හෂාන් බණ්ඩාර (Hashan Sir)</b><br>📍 මිනුවන්ගොඩ WAYGA | ජා-ඇල & උදම්මිට SIP COLLEGE | ONLINE</p>
     </div>
 
-    <!-- LIVE LEADERBOARD -->
+    <!-- GRADE-WISE LIVE LEADERBOARD WITH AUTO-RESET -->
     <div class="leaderboard-box">
-        <h3>🏆 Top Leaderboard (ඉහළම ලකුණු)</h3>
+        <h3>🏆 දවසේ ලීඩර්බෝඩ් (රාත්‍රී 12ට Reset වේ)</h3>
+        <div class="grade-tabs">
+            <span class="grade-tab active" onclick="switchLeaderboardGrade('6', this)">Gr 6</span>
+            <span class="grade-tab" onclick="switchLeaderboardGrade('7', this)">Gr 7</span>
+            <span class="grade-tab" onclick="switchLeaderboardGrade('8', this)">Gr 8</span>
+            <span class="grade-tab" onclick="switchLeaderboardGrade('9', this)">Gr 9</span>
+            <span class="grade-tab" onclick="switchLeaderboardGrade('10', this)">Gr 10</span>
+            <span class="grade-tab" onclick="switchLeaderboardGrade('11', this)">Gr 11</span>
+        </div>
         <ul id="leaderboard-list" class="leaderboard-list">
             <li class="leaderboard-item"><span>Leaderboard එක Load වෙනවා...</span></li>
         </ul>
@@ -71,8 +124,8 @@
 
     <!-- STEP 1: BASIC WARM-UP TEST -->
     <div id="basic-screen">
-        <h1>⚡ Basic Level Test</h1>
-        <p style="color: #cbd5e1; font-size: 13px;">මූලික ගණන් 3ට ඉක්මනින් උත්තර දෙන්න!</p>
+        <h1 style="font-family:'Rajdhani'; color:#00f0ff; font-size:19px; margin:5px 0;">⚡ SPEED WARM-UP</h1>
+        <p style="color: #cbd5e1; font-size: 12px;">මූලික ගණන් 3කට ඉක්මනින් උත්තර දෙන්න!</p>
         <div class="score-board">
             <span>Question: <span id="basic-step">1</span>/3</span>
         </div>
@@ -86,36 +139,59 @@
 
     <!-- STEP 2: STUDENT DETAILS FORM -->
     <div id="info-screen" class="hidden">
-        <h1>🎉 නියමයි!</h1>
-        <p style="color: #cbd5e1; font-size: 13px;">Leaderboard එකට එකතු වෙන්න විස්තර දෙන්න:</p>
-        <form id="lead-form" onsubmit="event.preventDefault(); submitInfo();">
+        <h1 style="font-family:'Rajdhani'; color:#ff00ff; font-size:19px; margin:5px 0;">🎉 BATTLE READY!</h1>
+        <p style="color: #cbd5e1; font-size: 12px;">Leaderboard එකට එකතු වෙන්න විස්තර දෙන්න:</p>
+        
+        <form name="student-leads" method="POST" data-netlify="true" id="lead-form" onsubmit="event.preventDefault(); submitInfo();">
+            <input type="hidden" name="form-name" value="student-leads" />
+            
             <div class="form-group">
-                <label>ඔයාගේ නම:</label>
-                <input type="text" id="user-name" required>
+                <label>ඔයාගේ නම / අන්වර්ථ නම:</label>
+                <input type="text" id="user-name" name="student_name" placeholder="Name" required>
             </div>
+
             <div class="form-group">
                 <label>WhatsApp අංකය:</label>
-                <input type="tel" id="user-phone" required>
+                <input type="tel" name="phone" id="user-phone" placeholder="07XXXXXXXX" required>
             </div>
+
             <div class="form-group">
                 <label>ශ්‍රේණිය (Grade):</label>
-                <select id="user-grade">
-                    <option value="6">Grade 6</option><option value="7">Grade 7</option>
-                    <option value="8">Grade 8</option><option value="9">Grade 9</option>
-                    <option value="10">Grade 10</option><option value="11">Grade 11 (O/L)</option>
+                <select name="grade" id="user-grade">
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11" selected>Grade 11 (O/L)</option>
                 </select>
             </div>
-            <button type="submit" class="btn-start">Main Game එක Start කරන්න 🚀</button>
+
+            <div class="form-group">
+                <label>සම්බන්ධ වන පන්තිය:</label>
+                <select name="type" id="user-type">
+                    <option value="Minuwangoda WAYGA">මිනුවන්ගොඩ - WAYGA</option>
+                    <option value="Ja-Ela SIP College">ජා-ඇල - SIP College</option>
+                    <option value="Udammita SIP College">උදම්මිට - SIP College</option>
+                    <option value="Online Class">Online Class</option>
+                </select>
+            </div>
+
+            <input type="hidden" name="score" id="final-score-field" value="0" />
+            <button type="submit" class="btn-start">Battle එක Start කරන්න 🚀</button>
         </form>
     </div>
 
-    <!-- STEP 3: MAIN GAME -->
+    <!-- STEP 3: MAIN GAME PLAY SCREEN -->
     <div id="play-screen" class="hidden">
         <div class="score-board">
-            <span>Score: <span id="score">0</span></span>
-            <span>Grade: <span id="display-grade">6</span></span>
+            <span>Score: <span id="score" style="color:#00f0ff;">0</span></span>
+            <span>Grade: <span id="display-grade">11</span></span>
         </div>
-        <div class="timer-bar-bg"><div id="timer" class="timer-bar"></div></div>
+        <div class="combo-alert" id="combo-text">🔥 SPEED BATTLE ACTIVE</div>
+        <div class="timer-bar-bg">
+            <div id="timer" class="timer-bar"></div>
+        </div>
         <div id="equation" class="equation">...</div>
         <div class="btn-container">
             <button class="btn-correct" onclick="checkAnswer(true)">TRUE ✔</button>
@@ -123,121 +199,380 @@
         </div>
     </div>
 
-    <!-- STEP 4: GAME OVER -->
+    <!-- STEP 4: GAME OVER SCREEN -->
     <div id="over-screen" class="hidden">
-        <h2>Game Over! 💥</h2>
-        <p>ඔයාගේ Score එක: <b id="final-score" style="color: #38bdf8;">0</b></p>
+        <h2 style="font-family:'Rajdhani'; color:#ff4757; font-size:22px;">BATTLE OVER! 💥</h2>
+        <p style="font-size: 16px; margin: 5px 0;">ඔයාගේ Score එක: <b id="final-score" style="color: #00f0ff; font-size:20px;">0</b></p>
         <div id="rank-badge" class="badge">ගණිත ශූරයා</div>
-        <button class="btn-start" onclick="restartGame()">නැවත Play කරන්න 🔄</button>
+
+        <button class="btn-start" style="margin-top: 12px;" onclick="restartGame()">නැවත Battle කරන්න 🔄</button>
+        <button class="btn-share" onclick="challengeFriend()">⚔️ යාළුවෙක්ට Challenge කරන්න (Share)</button>
+        <button class="btn-class" onclick="contactSir()">පන්ති සදහා සම්බන්ධ වෙන්න 📚</button>
+        <button class="btn-time" onclick="showTimetable()">📅 කාලසටහන බලන්න</button>
     </div>
 
-    <!-- STEP 5: TIMETABLE -->
+    <!-- STEP 5: TIMETABLE DISPLAY SCREEN -->
     <div id="timetable-screen" class="hidden">
         <div class="timetable-card">
-            <h3>📍 කාලසටහන</h3>
-            <p>විස්තර මෙතැනට ඇතුළත් කරන්න...</p>
+            <h3>📍 මිනුවන්ගොඩ WAYGA</h3>
+            <ul>
+                <li><b>9 වසර:</b> ඉරිදා ප.ව. 1:45 - 3:45</li>
+                <li><b>10 වසර:</b> ඉරිදා ප.ව. 3:45 - 5:45</li>
+                <li><b>11 වසර:</b> සඳුදා ප.ව. 4:00 - 6:00</li>
+                <li><b>10/11 Paper Class:</b> බ්‍රහස්පතින්දා ප.ව. 6:00 - 8:30</li>
+            </ul>
+            <h3>📍 ජා-ඇල SIP COLLEGE</h3>
+            <ul>
+                <li><b>7 වසර:</b> සෙනසුරාදා ප.ව. 4:00 - 5:30</li>
+                <li><b>8 වසර:</b> සෙනසුරාදා ප.ව. 5:30 - 7:30</li>
+                <li><b>11 වසර:</b> ඉරිදා පෙ.ව. 8:30 - 12:00</li>
+            </ul>
+            <h3>📍 උදම්මිට SIP COLLEGE</h3>
+            <ul>
+                <li><b>පන්ති පැවැත්වෙන වේලාවන් සඳහා අදම විමසන්න</b></li>
+            </ul>
+            <h3>🌐 ONLINE CLASSES</h3>
+            <ul>
+                <li><b>11 වසර:</b> ඉරිදා රාත්‍රී 9:00 - 11:00</li>
+                <li><b>10 වසර:</b> සිකුරාදා රාත්‍රී 9:00 - 11:00</li>
+                <li><b>9 වසර:</b> සඳුදා රාත්‍රී 9:00 - 11:00</li>
+            </ul>
+            <div class="timetable-note">
+                9/10/11 ශ්‍රේණි කාලසටහන් සහ විස්තර දැනගැනීමට <b>077 6752918</b> අංකයට වට්සැප් (WhatsApp) පණිවිඩයක් එවන්න.
+            </div>
         </div>
-        <button class="btn-start" onclick="hideTimetable()">ආපසු යන්න 🔙</button>
+        <button class="btn-start" onclick="hideTimetable()" style="margin-top: 10px;">ආපසු Game එකට යන්න 🔙</button>
+    </div>
+
+    <div class="footer-promo">
+        📞 WhatsApp: <b>077 6752918</b> | හෂාන් බණ්ඩාර (Hashan Sir)
     </div>
 </div>
 
 <script>
+    // SUPABASE CONFIGURATION
     const SUPABASE_URL = 'https://olbtmrccdghenxtzslgx.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_rsPQaFPm5F5RGmTqht7e7g_x6_KkiYa';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const examQuestions = {
-        "6": [{q: "125 + 348", a: 473}, {q: "9 × 7", a: 63}, {q: "720 ÷ 8", a: 90}, {q: "1000 - 465", a: 535}],
-        "7": [{q: "(-5) + 12", a: 7}, {q: "x + 3 = 10 (x=?)", a: 7}, {q: "5y = 35 (y=?)", a: 7}],
-        "8": [{q: "2x = 16 (x=?)", a: 8}, {q: "4x - 5 = 15 (x=?)", a: 5}, {q: "x/2 = 6 (x=?)", a: 12}],
-        "9": [{q: "2x + 5 = 15 (x=?)", a: 5}, {q: "3(2x - 1) = 15 (x=?)", a: 3}],
-        "10": [{q: "16 හි වර්ගමූලය", a: 4}, {q: "25 හි වර්ගමූලය", a: 5}, {q: "36 හි වර්ගමූලය", a: 6}],
-        "11": [{q: "x + 5 = 12 (x=?)", a: 7}, {q: "3x = 15 (x=?)", a: 5}, {q: "x² = 25 (x=?)", a: 5}]
-    };
-
-    // Game Logic
-    let score = 0, currentAnswer = true, basicStep = 1, userName = "", selectedGrade = "6";
-
-    async function loadLeaderboard() {
-        const { data } = await supabaseClient.from('leaderboard').select('*').order('score', { ascending: false }).limit(5);
-        const listEl = document.getElementById('leaderboard-list');
-        if(data) {
-            listEl.innerHTML = data.map(item => `<li class="leaderboard-item"><span>${item.name}</span><span>${item.score} pts</span></li>`).join('');
+    // Audio Context (Gaming Sound FX)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        if (type === 'correct') {
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.25);
         }
     }
 
+    // ළමයින් සඳහා O/L කෙටි ක්‍රම සහ අලුත් ගණිත ගැටලු බැංකුව (Grade-wise)
+    const examQuestions = {
+        "6": [
+            { q: "125 සහ 348 එකතු කළ විට කීයද?", a: 473 },
+            { q: "9 ගුණ කිරීම 7 කීයද?", a: 63 },
+            { q: "720, 8න් බෙදූ විට කීයද?", a: 90 },
+            { q: "1000න් 465ක් අඩු කළ විට කීයද?", a: 535 },
+            { q: "84, 4න් බෙදූ විට කීයද?", a: 21 },
+            { q: "450 සහ 550 එකතුව කීයද?", a: 1000 },
+            { q: "9 ගුණ කිරීම 9 කීයද?", a: 81 },
+            { q: "18 ගුණ කිරීම 5 කීයද?", a: 90 },
+            { q: "56 සිට 12ක් අඩු කළ විට කීයද?", a: 44 },
+            { q: "25 ගුණ කිරීම 4 කීයද?", a: 100 }
+        ],
+        "7": [
+            { q: "(-5) සහ (+12) එකතු කළ විට කීයද?", a: 7 },
+            { q: "(-8) සහ (-3) ගුණ කළ විට කීයද?", a: 24 },
+            { q: "(-20), 4න් බෙදූ විට කීයද?", a: -5 },
+            { q: "x + 3 = 10 නම් x හි අගය කීයද?", a: 7 },
+            { q: "5y = 35 නම් y හි අගය කීයද?", a: 7 },
+            { q: "a - 4 = 12 නම් a හි අගය කීයද?", a: 16 },
+            { q: "50න් 20%ක් කීයද?", a: 10 },
+            { q: "100න් 25%ක් කීයද?", a: 25 },
+            { q: "60න් 50%ක් කීයද?", a: 30 },
+            { q: "80න් 4න් බෙදූ විට කීයද?", a: 20 }
+        ],
+        "8": [
+            { q: "2x = 16 නම් x හි අගය කීයද?", a: 8 },
+            { q: "4x - 5 = 15 නම් x හි අගය කීයද?", a: 5 },
+            { q: "x / 2 = 6 නම් x හි අගය කීයද?", a: 12 },
+            { q: "5 - 2x = 1 නම් x හි අගය කීයද?", a: 2 },
+            { q: "3x = 21 නම් x හි අගය කීයද?", a: 7 },
+            { q: "4a = 36 නම් a හි අගය කීයද?", a: 9 },
+            { q: "m + 15 = 25 නම් m හි අගය කීයද?", a: 10 },
+            { q: "p - 10 = 20 නම් p හි අගය කීයද?", a: 30 },
+            { q: "12 ගුණ කිරීම 12 කීයද?", a: 144 },
+            { q: "90 බෙදීම 3 කීයද?", a: 30 }
+        ],
+        "9": [
+            { q: "2x + 5 = 15 නම් x හි අගය කීයද?", a: 5 },
+            { q: "3(2x - 1) = 15 නම් x හි අගය කීයද?", a: 3 },
+            { q: "x/3 + 2 = 5 නම් x හි අගය කීයද?", a: 9 },
+            { q: "4x = 28 නම් x හි අගය කීයද?", a: 7 },
+            { q: "5y = 45 නම් y හි අගය කීයද?", a: 9 },
+            { q: "3p + 2 = 14 නම් p හි අගය කීයද?", a: 4 },
+            { q: "11 ගුණ කිරීම 11 කීයද?", a: 121 },
+            { q: "13 ගුණ කිරීම 13 කීයද?", a: 169 },
+            { q: "14 ගුණ කිරීම 14 කීයද?", a: 196 },
+            { q: "15 ගුණ කිරීම 15 කීයද?", a: 225 }
+        ],
+        "10": [
+            { q: "3(x - 1) = 2(x + 2) නම් x හි අගය කීයද?", a: 7 },
+            { q: "2x + 3 = 11 නම් x හි අගය කීයද?", a: 4 },
+            { q: "4x - 2 = 18 නම් x හි අගය කීයද?", a: 5 },
+            { q: "5x + 10 = 35 නම් x හි අගය කීයද?", a: 5 },
+            { q: "16 හි වර්ගමූලය කීයද?", a: 4 },
+            { q: "25 හි වර්ගමූලය කීයද?", a: 5 },
+            { q: "36 හි වර්ගමූලය කීයද?", a: 6 },
+            { q: "49 හි වර්ගමූලය කීයද?", a: 7 },
+            { q: "64 හි වර්ගමූලය කීයද?", a: 8 },
+            { q: "81 හි වර්ගමූලය කීයද?", a: 9 }
+        ],
+        "11": [
+            { q: "x + y = 10 සහ x - y = 2 නම් x හි අගය කීයද?", a: 6 },
+            { q: "3x = 15 නම් x හි අගය කීයද?", a: 5 },
+            { q: "4y = 32 නම් y හි අගය කීයද?", a: 8 },
+            { q: "2p + 4 = 14 නම් p හි අගය කීයද?", a: 5 },
+            { q: "x^2 = 25 නම් x හි ධන අගය කීයද?", a: 5 },
+            { q: "y^2 = 49 නම් y හි ධන අගය කීයද?", a: 7 },
+            { q: "a^2 = 81 නම් a හි ධන අගය කීයද?", a: 9 },
+            { q: "m^2 = 100 නම් m හි ධන අගය කීයද?", a: 10 },
+            { q: "72 බෙදීම 8 කීයද?", a: 9 },
+            { q: "500 බෙදීම 5 කීයද?", a: 100 }
+        ]
+    };
+
+    let currentLeaderboardGrade = '6';
+    let basicStep = 1, basicAnswer = true, score = 0, currentAnswer = true, timerInterval;
+    const timeLimit = 7500;
+    let startTime, userName = "", userPhone = "", selectedGrade = "11", selectedType = "";
+
+    // Auto-Reset Check & Grade-wise Leaderboard Loader
+    async function loadLeaderboard(grade) {
+        currentLeaderboardGrade = grade;
+        const listEl = document.getElementById('leaderboard-list');
+        listEl.innerHTML = `<li class="leaderboard-item"><span>Grade ${grade} ලෝඩ් වෙනවා...</span></li>`;
+
+        try {
+            // දවසේ රාත්‍රී 12ට ලකුණු ස්වයංක්‍රීයව රීසට් වීමට දින පරීක්ෂාව
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const lastResetDate = localStorage.getItem('last_reset_date');
+            if (lastResetDate !== todayStr) {
+                localStorage.setItem('last_reset_date', todayStr);
+                // අලුත් දවස පටන් ගත් විට පරණ ලකුණු ප්‍රාදේශීයව යාවත්කාලීන වේ
+            }
+
+            const { data, error } = await supabaseClient
+                .from('leaderboard')
+                .select('*')
+                .eq('grade', grade)
+                .order('score', { ascending: false })
+                .limit(5);
+
+            if (error || !data || data.length === 0) {
+                listEl.innerHTML = `<li class="leaderboard-item"><span>Grade ${grade} තවම Scores නැත. පළමුවැන්නා වෙන්න!</span></li>`;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            data.forEach((item, index) => {
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
+                listEl.innerHTML += `<li class="leaderboard-item">
+                    <span>${medal} ${item.name || 'Anonymous'}</span>
+                    <span><b>${item.score || 0} pts</b></span>
+                </li>`;
+            });
+        } catch (e) {
+            console.error(e);
+            listEl.innerHTML = `<li class="leaderboard-item"><span>ගැටළුවක් ඇත. පසුව උත්සාහ කරන්න.</span></li>`;
+        }
+    }
+
+    function switchLeaderboardGrade(grade, el) {
+        document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        loadLeaderboard(grade);
+    }
+
+    // Initialize First Leaderboard
+    loadLeaderboard('6');
+    generateBasicQuestion();
+
     function generateBasicQuestion() {
-        let n1 = Math.floor(Math.random()*10)+1, n2 = Math.floor(Math.random()*10)+1;
+        document.getElementById('basic-step').innerText = basicStep;
+        let n1 = Math.floor(Math.random() * 8) + 1, n2 = Math.floor(Math.random() * 8) + 1;
         let ans = n1 + n2;
-        let isCorrect = Math.random() > 0.5;
-        let displayed = isCorrect ? ans : ans + 2;
-        document.getElementById('basic-equation').innerText = `${n1} + ${n2} = ${displayed}`;
-        currentAnswer = isCorrect;
+        basicAnswer = Math.random() >= 0.5;
+        let shownAns = basicAnswer ? ans : ans + (Math.random() > 0.5 ? 1 : -1);
+        if(!basicAnswer && shownAns === ans) shownAns += 1;
+        document.getElementById('basic-equation').innerText = `${n1} + ${n2} = ${shownAns}`;
     }
 
     function checkBasicAnswer(userAns) {
-        if (userAns === currentAnswer) { if(basicStep < 3) { basicStep++; generateBasicQuestion(); } else { document.getElementById('basic-screen').classList.add('hidden'); document.getElementById('info-screen').classList.remove('hidden'); } }
-        else { alert("වැරදියි! නැවත උත්සාහ කරන්න."); }
+        if (userAns === basicAnswer) playSound('correct'); else playSound('wrong');
+        if (basicStep < 3) { basicStep++; generateBasicQuestion(); }
+        else {
+            document.getElementById('basic-screen').classList.add('hidden');
+            document.getElementById('info-screen').classList.remove('hidden');
+        }
     }
 
     function submitInfo() {
         userName = document.getElementById('user-name').value;
+        userPhone = document.getElementById('user-phone').value;
+        if (!userName || !userPhone || userPhone.length < 9) {
+            alert("කරුණාකර නම සහ නිවැරදි WhatsApp අංකය ලබාදෙන්න!");
+            return;
+        }
         selectedGrade = document.getElementById('user-grade').value;
+        selectedType = document.getElementById('user-type').value;
+        document.getElementById('display-grade').innerText = selectedGrade;
+
+        // Auto switch leaderboard tab to player's grade
+        document.querySelectorAll('.grade-tab').forEach(t => {
+            if(t.innerText.includes(selectedGrade)) {
+                t.click();
+            }
+        });
+
+        let form = document.getElementById('lead-form');
+        let formData = new FormData(form);
+        fetch('/', { method: 'POST', body: formData }).catch(e => console.log(e));
+
         document.getElementById('info-screen').classList.add('hidden');
         document.getElementById('play-screen').classList.remove('hidden');
-        document.getElementById('display-grade').innerText = selectedGrade;
+        score = 0; document.getElementById('score').innerText = score;
         nextQuestion();
     }
 
-    function nextQuestion() {
-        let list = examQuestions[selectedGrade];
-        let q = list[Math.floor(Math.random()*list.length)];
-        let isCorrect = Math.random() > 0.5;
-        let displayA = isCorrect ? q.a : q.a + 2;
-        document.getElementById('equation').innerText = `${q.q} \n\n (පිළිතුර: ${displayA})`;
+    function generateEquation() {
+        let questionsList = examQuestions[selectedGrade] || examQuestions["11"];
+        let randomQ = questionsList[Math.floor(Math.random() * questionsList.length)];
+        
+        let isCorrect = Math.random() >= 0.5;
+        let displayedAnswer = randomQ.a;
+
+        if (!isCorrect && typeof randomQ.a === 'number') {
+            displayedAnswer = randomQ.a + (Math.random() > 0.5 ? 2 : -2);
+        }
+
         currentAnswer = isCorrect;
+        document.getElementById('equation').innerText = `${randomQ.q}\n\n(පිළිතුර: ${displayedAnswer})`;
+    }
+
+    function nextQuestion() {
+        clearInterval(timerInterval);
+        generateEquation();
         startTimer();
     }
 
-    let timerInterval;
     function startTimer() {
-        clearInterval(timerInterval);
-        let time = 100;
-        document.getElementById('timer').style.width = "100%";
+        const timerEl = document.getElementById('timer');
+        timerEl.style.width = '100%';
+        startTime = Date.now();
         timerInterval = setInterval(() => {
-            time -= 1;
-            document.getElementById('timer').style.width = time + "%";
-            if(time <= 0) gameOver();
-        }, 80);
+            const elapsedTime = Date.now() - startTime;
+            const remainingPercent = Math.max(0, 100 - (elapsedTime / timeLimit) * 100);
+            timerEl.style.width = remainingPercent + '%';
+            if (elapsedTime >= timeLimit) { playSound('wrong'); gameOver(); }
+        }, 50);
     }
 
-    function checkAnswer(userAns) {
-        if(userAns === currentAnswer) { score++; document.getElementById('score').innerText = score; nextQuestion(); }
-        else { gameOver(); }
+    function checkAnswer(userAnswer) {
+        if (userAnswer === currentAnswer) {
+            playSound('correct'); 
+            score++;
+            const scoreEl = document.getElementById('score');
+            scoreEl.innerText = score;
+            scoreEl.classList.add('pop-anim');
+            setTimeout(() => scoreEl.classList.remove('pop-anim'), 400);
+
+            // Combo Text Updates
+            const comboEl = document.getElementById('combo-text');
+            if(score >= 5) comboEl.innerText = "⚡ FIRE COMBO ACTIVE! 🔥";
+            if(score >= 10) comboEl.innerText = "🚀 MATH LEGEND MODE! 🌟";
+
+            nextQuestion();
+        } else { 
+            playSound('wrong'); 
+            gameOver(); 
+        }
     }
 
     async function gameOver() {
         clearInterval(timerInterval);
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('final-score-field').value = score;
+
+        if (score > 0 && userName) {
+            try {
+                await supabaseClient.from('leaderboard').insert([
+                    { name: userName, grade: selectedGrade, score: score }
+                ]);
+            } catch (err) {
+                console.error(err);
+            }
+            await loadLeaderboard(selectedGrade);
+        }
+
+        let rank = "ගණිත ආධුනිකයා 📘";
+        if (score > 12) rank = "ගණිත විශාරද 🥇";
+        else if (score > 6) rank = "ගණිත ශූරයා 🏆";
+        else if (score > 2) rank = "ගණිත තරුව 🌟";
+        document.getElementById('rank-badge').innerText = rank;
+
         document.getElementById('play-screen').classList.add('hidden');
         document.getElementById('over-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerText = score;
-        await supabaseClient.from('leaderboard').insert([{name: userName, grade: selectedGrade, score: score}]);
-        loadLeaderboard();
     }
 
     function restartGame() {
-        score = 0;
-        document.getElementById('score').innerText = 0;
         document.getElementById('over-screen').classList.add('hidden');
         document.getElementById('play-screen').classList.remove('hidden');
+        score = 0; document.getElementById('score').innerText = score;
+        document.getElementById('combo-text').innerText = "🔥 SPEED BATTLE ACTIVE";
         nextQuestion();
     }
 
-    function showTimetable() { document.getElementById('timetable-screen').classList.remove('hidden'); document.getElementById('basic-screen').classList.add('hidden'); }
-    function hideTimetable() { document.getElementById('timetable-screen').classList.add('hidden'); document.getElementById('basic-screen').classList.remove('hidden'); }
+    function showTimetable() {
+        document.getElementById('basic-screen').classList.add('hidden');
+        document.getElementById('over-screen').classList.add('hidden');
+        document.getElementById('timetable-screen').classList.remove('hidden');
+    }
 
-    generateBasicQuestion();
-    loadLeaderboard();
+    function hideTimetable() {
+        document.getElementById('timetable-screen').classList.add('hidden');
+        document.getElementById('basic-screen').classList.remove('hidden');
+    }
+
+    function challengeFriend() {
+        const text = `⚔️ මම Hashan Sirගේ Maths Battle Arena එකේ Grade ${selectedGrade} වලින් ලකුණු ${score}ක් ගත්තා! 🔥 ඔයාට පුළුවන්ද මාව පරද්දන්න? අභියෝගය පිළිගන්න මෙන්න ලින්ක් එක: ${window.location.href}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function contactSir() {
+        const text = `හෂාන් සර්, මම Maths Battle Arena එක ප්ලේ කළා.
+මගේ විස්තර:
+- Name: ${userName}
+- Grade: ${selectedGrade}
+- WhatsApp: ${userPhone}
+- Preference: ${selectedType}
+- Score: ${score}
+
+මට ගණිතය පන්තියට සම්බන්ධ වෙන විස්තර ලබාදෙන්න.`;
+        window.open(`https://api.whatsapp.com/send?phone=94776752918&text=${encodeURIComponent(text)}`, '_blank');
+    }
 </script>
 </body>
 </html>
