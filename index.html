@@ -3,42 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maths Love - Hashan Sir</title>
+    <title>Maths Love එක | Hashan Sir</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --neon: #00f0ff; --gold: #ffd700; --bg: #090d16; }
-        body { background: radial-gradient(circle, #1a2a44, #000); color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .game-card { background: rgba(20, 30, 50, 0.9); border: 2px solid var(--neon); border-radius: 20px; padding: 20px; width: 100%; max-width: 450px; box-shadow: 0 0 25px rgba(0, 240, 255, 0.2); }
-        .equation { font-size: 24px; color: var(--gold); margin: 20px 0; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--neon); background: #000; color: white; }
-        button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .game-card { background: rgba(20, 30, 50, 0.95); border: 2px solid var(--neon); border-radius: 25px; padding: 30px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 0 30px rgba(0, 240, 255, 0.3); }
+        .timer-bar { width: 100%; height: 10px; background: #333; border-radius: 5px; margin: 20px 0; overflow: hidden; }
+        #timer-progress { width: 100%; height: 100%; background: var(--neon); transition: width 0.1s linear; }
+        .equation { font-size: 35px; color: var(--gold); margin: 25px 0; font-weight: bold; text-shadow: 0 0 10px var(--gold); }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--neon); background: #000; color: white; text-align: center; }
+        button { width: 100%; padding: 15px; margin-top: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 16px; }
         .btn-start { background: var(--neon); color: #000; }
         .btn-correct { background: #2ed573; color: white; }
         .btn-wrong { background: #ff4757; color: white; }
         .hidden { display: none; }
-        .leaderboard-item { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 5px 0; }
     </style>
 </head>
 <body>
 
 <div class="game-card">
-    <h2 style="color:var(--neon); text-align:center;">Maths Love Challenge</h2>
-    
+    <h2 style="color:var(--neon);">Maths Love එක 🚀</h2>
+
     <!-- Leaderboard -->
     <div id="leader-screen">
         <h3>🏆 අද දින ශූරයෝ</h3>
         <div id="leaderboard-list"></div>
-        <button class="btn-start" onclick="nextScreen('info-screen')">Game එක පටන් ගන්න 🚀</button>
+        <button class="btn-start" onclick="showScreen('info-screen')">සෙල්ලම් කරන්න පටන් ගන්න</button>
     </div>
 
     <!-- User Info -->
     <div id="info-screen" class="hidden">
-        <input type="text" id="u-name" placeholder="ඔයාගේ නම">
-        <button class="btn-start" onclick="saveUser()">සෙල්ලම් කරන්න පටන් ගන්න</button>
+        <input type="text" id="u-name" placeholder="ඔයාගේ නම ඇතුළත් කරන්න">
+        <button class="btn-start" onclick="startGame()">ගණිත අභියෝගය පටන් ගන්න</button>
     </div>
 
     <!-- Play Screen -->
     <div id="play-screen" class="hidden">
+        <div class="timer-bar"><div id="timer-progress"></div></div>
         <div id="equation" class="equation">...</div>
         <button class="btn-correct" onclick="check(true)">TRUE ✔</button>
         <button class="btn-wrong" onclick="check(false)">FALSE ✖</button>
@@ -47,44 +49,57 @@
 
 <script>
     const supabase = supabase.createClient('https://olbtmrccdghenxtzslgx.supabase.co', 'sb_publishable_rsPQaFPm5F5RGmTqht7e7g_x6_KkiYa');
-    let userName = "", score = 0, currentCorrect = true;
+    let score = 0, currentCorrect, userName, timer;
 
     async function loadLeaderboard() {
         const today = new Date().toISOString().split('T')[0];
         const { data } = await supabase.from('leaderboard').select('*').gte('created_at', today).order('score', { ascending: false });
-        document.getElementById('leaderboard-list').innerHTML = (data || []).map(i => 
-            `<div class="leaderboard-item"><span>${i.name}</span><span>${i.score} pts</span></div>`).join('');
+        document.getElementById('leaderboard-list').innerHTML = (data || []).map(i => `<div style="display:flex; justify-content:space-between; padding:5px 0;"><span>${i.name}</span><span>${i.score} pts</span></div>`).join('');
     }
 
-    function saveUser() {
+    function showScreen(id) {
+        document.querySelectorAll('.game-card > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function startGame() {
         userName = document.getElementById('u-name').value;
-        if(userName) nextScreen('play-screen'), generate();
+        if(!userName) return alert("කරුණාකර නම ඇතුළත් කරන්න!");
+        score = 0;
+        showScreen('play-screen');
+        generate();
     }
 
     function generate() {
-        let n1 = Math.floor(Math.random()*20), n2 = Math.floor(Math.random()*20);
+        let n1 = Math.floor(Math.random()*15), n2 = Math.floor(Math.random()*15);
         let ans = n1 + n2;
         currentCorrect = Math.random() > 0.5;
         document.getElementById('equation').innerText = `${n1} + ${n2} = ${currentCorrect ? ans : ans+1}`;
+        
+        // Timer Logic
+        let width = 100;
+        clearInterval(timer);
+        timer = setInterval(() => {
+            width -= 0.5;
+            document.getElementById('timer-progress').style.width = width + "%";
+            if(width <= 0) gameOver();
+        }, 30);
     }
 
     async function check(val) {
-        if(val === currentCorrect) {
-            score++;
-            generate();
-        } else {
-            // Game Over & Update Logic
-            const { data: existing } = await supabase.from('leaderboard').select('id, score').eq('name', userName).single();
-            if(existing && score > existing.score) await supabase.from('leaderboard').update({score}).eq('id', existing.id);
-            else if(!existing) await supabase.from('leaderboard').insert([{name: userName, score}]);
-            alert("Game Over! ඔයාගේ ලකුණු: " + score);
-            location.reload();
-        }
+        if(val === currentCorrect) { score++; generate(); }
+        else gameOver();
     }
 
-    function nextScreen(id) {
-        document.querySelectorAll('.game-card > div').forEach(d => d.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
+    async function gameOver() {
+        clearInterval(timer);
+        alert("Game Over! ඔයාගේ ලකුණු: " + score);
+        
+        const { data: existing } = await supabase.from('leaderboard').select('id, score').eq('name', userName).single();
+        if(existing && score > existing.score) await supabase.from('leaderboard').update({score}).eq('id', existing.id);
+        else if(!existing) await supabase.from('leaderboard').insert([{name: userName, score}]);
+        
+        location.reload();
     }
 
     loadLeaderboard();
