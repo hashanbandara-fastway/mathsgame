@@ -1,762 +1,205 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="si">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maths Love - Hashan Sir</title>
-    <!-- Google Sinhala Font: Noto Serif Sinhala & Poppins for cartoon vibes -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * { box-sizing: border-box; font-family: 'Poppins', 'Noto Serif Sinhala', sans-serif; }
-        body { 
-            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); 
-            color: #ffffff; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            padding: 15px; 
-            overflow-x: hidden;
-        }
-
-        /* Floating Cartoon Bubble Animation */
-        @keyframes floatBubble {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(1deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-            50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.8), inset 0 0 15px rgba(255, 215, 0, 0.3); }
-            100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-        }
-
-        .game-card { 
-            background: linear-gradient(145deg, #131c31, #0b111e); 
-            border: 3px solid #00f0ff; 
-            border-radius: 28px; 
-            padding: 25px; 
-            width: 100%; 
-            max-width: 480px; 
-            text-align: center; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px rgba(0, 240, 255, 0.3); 
-            position: relative; 
-            animation: floatBubble 4s ease-in-out infinite, pulseGlow 3s infinite;
-        }
-
-        .brand-header { 
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(255, 215, 0, 0.08)); 
-            border-radius: 18px; 
-            padding: 15px; 
-            margin-bottom: 15px; 
-            border: 2px dashed #00f0ff; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            box-shadow: inset 0 0 10px rgba(0,240,255,0.2);
-        }
-
-        .profile-img { 
-            width: 85px; 
-            height: 85px; 
-            border-radius: 50%; 
-            border: 4px solid #ffd700; 
-            object-fit: cover; 
-            margin-bottom: 8px; 
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
-            transition: transform 0.3s;
-        }
-        .profile-img:hover { transform: scale(1.08) rotate(3deg); }
-
-        .brand-header h2 { margin: 0; color: #ffd700; font-size: 22px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .brand-header p { margin: 6px 0 0 0; color: #cbd5e1; font-size: 12px; font-weight: 600; line-height: 1.4; }
-        
-        h1, h2 { margin: 10px 0; color: #00f0ff; font-size: 22px; font-weight: 800; text-shadow: 0 2px 6px rgba(0,240,255,0.4); }
-        
-        .leaderboard-box { 
-            background: #080c14; 
-            border: 2px solid #ffd700; 
-            border-radius: 16px; 
-            padding: 12px; 
-            margin-bottom: 20px; 
-            text-align: left; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-        }
-        .leaderboard-box h3 { color: #ffd700; margin: 0 0 10px 0; font-size: 15px; text-align: center; border-bottom: 1px dashed #ffd700; padding-bottom: 6px; font-weight: 800; }
-        .leaderboard-list { list-style: none; padding: 0; margin: 0; }
-        .leaderboard-item { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 7px 10px; 
-            font-size: 13px; 
-            border-bottom: 1px solid #151d2f; 
-            border-radius: 8px;
-            margin-bottom: 3px;
-            background: rgba(255,255,255,0.02);
-        }
-        .leaderboard-item:nth-child(1) { color: #ffd700; font-weight: 800; font-size: 14px; background: rgba(255,215,0,0.1); }
-        .leaderboard-item:nth-child(2) { color: #e2e8f0; font-weight: 700; }
-        .leaderboard-item:nth-child(3) { color: #cbd5e1; font-weight: 700; }
-
-        .form-group { margin: 12px 0; text-align: left; }
-        .form-group label { font-size: 12px; color: #00f0ff; display: block; margin-bottom: 4px; font-weight: 600; }
-        input, select { 
-            padding: 12px; 
-            border-radius: 12px; 
-            border: 2px solid #00f0ff; 
-            background: #080c14; 
-            color: white; 
-            font-size: 14px; 
-            width: 100%; 
-            outline: none;
-            transition: all 0.3s;
-        }
-        input:focus, select:focus { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
-        
-        .score-board { display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; margin-bottom: 15px; color: #ffd700; background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 12px; border: 1px solid rgba(0,240,255,0.3); }
-        .timer-bar-bg { background: #080c14; height: 12px; border-radius: 8px; overflow: hidden; margin-bottom: 20px; border: 1px solid #22304a; }
-        .timer-bar { background: linear-gradient(90deg, #ff4757, #ffa502); height: 100%; width: 100%; transition: width 0.1s linear; border-radius: 8px; }
-        
-        .equation { 
-            font-size: 20px; 
-            font-weight: 800; 
-            margin: 20px 0 25px 0; 
-            color: #ffffff; 
-            line-height: 1.6; 
-            white-space: pre-line; 
-            background: rgba(0, 240, 255, 0.05);
-            padding: 20px;
-            border-radius: 16px;
-            border: 2px dashed #00f0ff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-        }
-        
-        .btn-container { display: flex; gap: 15px; }
-        button { 
-            flex: 1; 
-            padding: 14px; 
-            font-size: 16px; 
-            font-weight: 800; 
-            border: none; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            transition: transform 0.1s, filter 0.2s;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-        }
-        button:active { transform: scale(0.95); }
-        
-        .btn-correct { background: linear-gradient(135deg, #2ed573, #26af5f); color: white; border: 2px solid #7eff9e; }
-        .btn-wrong { background: linear-gradient(135deg, #ff4757, #ff3343); color: white; border: 2px solid #ff99a4; }
-        .btn-start { background: linear-gradient(135deg, #00f0ff, #0099ff); color: #090d16; width: 100%; font-size: 17px; margin-top: 10px; border: 2px solid #fff; }
-        .btn-share { background: linear-gradient(135deg, #25D366, #1ebe5d); color: white; width: 100%; margin-top: 10px; font-size: 15px; border: 2px solid #82f5ad; }
-        .btn-class { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #090d16; width: 100%; margin-top: 10px; font-size: 15px; font-weight: 800; border: 2px solid #fff; }
-        .btn-time { background: linear-gradient(135deg, #5352ed, #3735cc); color: white; width: 100%; margin-top: 10px; font-size: 14px; border: 2px solid #a5a4ff; }
-        .btn-lesson { background: linear-gradient(135deg, #ff9f43, #ff7f11); color: white; width: 100%; margin-top: 10px; font-size: 14px; border: 2px solid #ffcb94; }
-        
-        .badge { 
-            display: inline-block; 
-            padding: 8px 20px; 
-            background: linear-gradient(135deg, #ffd700, #ff9f43); 
-            color: #090d16; 
-            border-radius: 25px; 
-            font-weight: 800; 
-            margin-top: 10px; 
-            font-size: 15px; 
-            box-shadow: 0 5px 15px rgba(255,215,0,0.4);
-            border: 2px solid #fff;
-        }
-        
-        /* Timetable & Lesson Card Styling */
-        .timetable-card, .lesson-card { 
-            background: #080c14; 
-            border: 2px solid #00f0ff; 
-            border-radius: 16px; 
-            padding: 15px; 
-            text-align: left; 
-            margin-top: 15px; 
-            font-size: 13px; 
-            color: #cbd5e1; 
-            max-height: 350px; 
-            overflow-y: auto; 
-            box-shadow: inset 0 0 15px rgba(0,240,255,0.1);
-        }
-        .timetable-card h3, .lesson-card h3 { color: #ffd700; margin-top: 0; font-size: 15px; text-align: center; border-bottom: 1px dashed #ffd700; padding-bottom: 6px; }
-        .timetable-card ul, .lesson-card ul { padding-left: 20px; margin: 5px 0 15px 0; }
-        .timetable-card li { margin-bottom: 6px; }
-        .timetable-note { text-align: center; background: rgba(255, 215, 0, 0.1); border: 1px dashed #ffd700; padding: 10px; border-radius: 10px; color: #ffd700; font-size: 12px; margin-top: 10px; font-weight: 600; }
-        
-        .lesson-item { background: #131c31; border: 1px solid #00f0ff; border-radius: 10px; padding: 12px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .lesson-item b { color: #ffd700; }
-        .lesson-ans { color: #2ed573; margin-top: 6px; display: block; font-weight: 600; }
-
-        .footer-promo { margin-top: 15px; padding-top: 12px; border-top: 1px dashed #22304a; font-size: 12px; color: #94a3b8; font-weight: 600; }
-        .hidden { display: none; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maths Love | Hashan Sir</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+:root{--cyan:#00f0ff;--gold:#ffd700;--bg:#03050d;--panel:#0b1120;--green:#2ed573;--red:#ff4757;--purple:#7c4dff;--muted:#9aa8bf}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0%,#18295a 0,#060914 36%,#02030a 100%);color:#fff;font-family:'Noto Serif Sinhala','Segoe UI',sans-serif}
+body:before{content:"";position:fixed;inset:-50%;background:conic-gradient(from 0deg,transparent,rgba(0,240,255,.06),transparent 24%,rgba(124,77,255,.06),transparent 50%);animation:spin 18s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.wrap{max-width:590px;margin:auto;padding:12px;position:relative;z-index:1}
+.card{background:linear-gradient(145deg,rgba(15,23,42,.98),rgba(3,5,13,.98));border:1px solid #00f0ff55;border-radius:26px;padding:16px;box-shadow:0 30px 90px #000b,0 0 40px #00f0ff10}
+.hero{display:flex;gap:13px;align-items:center;padding:15px;border:1px solid #00f0ff55;border-radius:20px;background:linear-gradient(135deg,#00f0ff15,#7c4dff18)}
+.profile{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid var(--cyan);box-shadow:0 0 22px #00f0ff55;background:#111}
+h1{font-size:20px;margin:0;color:var(--gold)}h2{font-size:18px;color:var(--cyan);margin:7px 0}h3{font-size:15px;color:var(--gold);margin:7px 0}
+p,.note,.small{font-size:12px;color:#b8c4d8;line-height:1.6}
+.panel{margin-top:13px;padding:15px;border:1px solid #233555;border-radius:18px;background:#050a14cc}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+button,select,input{font-family:inherit}
+button{border:0;border-radius:13px;padding:12px;font-weight:800;cursor:pointer;min-height:44px}
+button:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.primary{width:100%;margin-top:9px;background:linear-gradient(90deg,var(--cyan),#70f7ff);color:#041016}
+.gold{background:var(--gold);color:#111;width:100%;margin-top:9px}
+.green{background:var(--green);color:#07150c}.red{background:var(--red);color:#fff}
+.purple{background:var(--purple);color:#fff;width:100%;margin-top:9px}
+.wa{background:#25D366;color:#fff;width:100%;margin-top:9px}
+select,input{width:100%;padding:11px;border-radius:11px;border:1px solid #315080;background:#070b16;color:#fff;margin-top:5px}
+label{display:block;font-size:12px;color:#aebbd0;margin-top:10px}
+.hidden{display:none!important}
+.lb{list-style:none;padding:0;margin:0}.lb li{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #1b2840;font-size:12px}
+.lb li:first-child{color:var(--gold);font-weight:800}
+.timer-bg{height:11px;background:#1d2940;border-radius:99px;overflow:hidden;margin:8px 0 16px}.timer{height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--gold),var(--red));transition:width .08s linear}
+.eq{min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;white-space:pre-line;font-size:17px;font-weight:800;line-height:1.75}
+.score{display:flex;justify-content:space-between;font-size:12px;color:#dbe4f2}
+.tcard{padding:12px;border:1px solid #00f0ff33;border-radius:14px;background:#070d19;margin:8px 0}
+.tcard b{color:var(--cyan)}.tcard h3{border-bottom:1px solid #26364f;padding-bottom:6px}
+.q{padding:11px;border:1px solid #26364f;border-radius:12px;background:#0b1322;margin:7px 0;cursor:pointer;font-size:12px}
+.q .ans{display:none;color:#65ffad;margin-top:6px;font-weight:800}.q.show .ans{display:block}
+.feedback{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:99;font-size:35px;font-weight:900;opacity:0}
+.feedback.show{animation:pop .65s ease}.good{color:#63ffad;text-shadow:0 0 25px #2ed573}.bad{color:#ff7180;text-shadow:0 0 25px #ff4757}
+.badge{display:inline-block;padding:6px 14px;border-radius:99px;background:#00f0ff;color:#031017;font-weight:900}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.hero{align-items:flex-start}}
+</style>
 </head>
 <body>
+<div id="feedback" class="feedback"></div>
+<div class="wrap"><main class="card">
 
-<div class="game-card">
-    <div class="brand-header">
-        <img src="sir.jpg" alt="Hashan Sir" class="profile-img">
-        <h2>Maths Love | ගණිතය ❤️</h2>
-        <p><b>හෂාන් බණ්ඩාර (Hashan Sir)</b><br>📍 මිනුවන්ගොඩ WAYGA | ජා-ඇල & උදම්මිට SIP COLLEGE | ONLINE</p>
-    </div>
-
-    <!-- LIVE LEADERBOARD -->
-    <div class="leaderboard-box">
-        <h3>🏆 Top Leaderboard (අද දින ලකුණු)</h3>
-        <ul id="leaderboard-list" class="leaderboard-list">
-            <li class="leaderboard-item"><span>Leaderboard එක Load වෙනවා...</span></li>
-        </ul>
-    </div>
-
-    <!-- STEP 1: BASIC WARM-UP TEST -->
-    <div id="basic-screen">
-        <h1>⚡ Basic Level Test</h1>
-        <p style="color: #cbd5e1; font-size: 13px; font-weight: 600;">මූලික ගණන් 3ට ඉක්මනින් උත්තර දෙන්න!</p>
-        <div class="score-board">
-            <span>Question: <span id="basic-step">1</span>/3</span>
-        </div>
-        <div id="basic-equation" class="equation">...</div>
-        <div class="btn-container">
-            <button class="btn-correct" onclick="checkBasicAnswer(true)">TRUE ✔</button>
-            <button class="btn-wrong" onclick="checkBasicAnswer(false)">FALSE ✖</button>
-        </div>
-        <button class="btn-lesson" onclick="showLessonSection()">📖 පාඩම් ආශ්‍රිත ගැටලු විසඳීම (6-11)</button>
-        <button class="btn-time" onclick="showTimetable()">📅 පන්ති කාලසටහන බලන්න</button>
-    </div>
-
-    <!-- STEP 2: STUDENT DETAILS FORM -->
-    <div id="info-screen" class="hidden">
-        <h1>🎉 නියමයි!</h1>
-        <p style="color: #cbd5e1; font-size: 13px; font-weight: 600;">Leaderboard එකට එකතු වෙන්න විස්තර දෙන්න:</p>
-        
-        <form name="student-leads" method="POST" data-netlify="true" id="lead-form" onsubmit="event.preventDefault(); submitInfo();">
-            <input type="hidden" name="form-name" value="student-leads" />
-            
-            <div class="form-group">
-                <label>ඔයාගේ නම / අන්වර්ථ නම (Leaderboard එකට):</label>
-                <input type="text" id="user-name" name="student_name" placeholder="Name" required>
-            </div>
-
-            <div class="form-group">
-                <label>WhatsApp අංකය:</label>
-                <input type="tel" name="phone" id="user-phone" placeholder="07XXXXXXXX" required>
-            </div>
-
-            <div class="form-group">
-                <label>ශ්‍රේණිය (Grade):</label>
-                <select name="grade" id="user-grade">
-                    <option value="6">Grade 6</option>
-                    <option value="7">Grade 7</option>
-                    <option value="8">Grade 8</option>
-                    <option value="9">Grade 9</option>
-                    <option value="10">Grade 10</option>
-                    <option value="11">Grade 11 (O/L)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>සම්බන්ධ වන පන්තිය:</label>
-                <select name="type" id="user-type">
-                    <option value="Minuwangoda WAYGA">මිනුවන්ගොඩ - WAYGA</option>
-                    <option value="Ja-Ela SIP College">ජා-ඇල - SIP College</option>
-                    <option value="Udammita SIP College">උදම්මිට - SIP College</option>
-                    <option value="Online Class">Online Class</option>
-                </select>
-            </div>
-
-            <input type="hidden" name="score" id="final-score-field" value="0" />
-            <button type="submit" class="btn-start">Main Game එක Start කරන්න 🚀</button>
-        </form>
-    </div>
-
-    <!-- STEP 3: MAIN GAME PLAY SCREEN -->
-    <div id="play-screen" class="hidden">
-        <div class="score-board">
-            <span>Score: <span id="score">0</span></span>
-            <span>Grade: <span id="display-grade">6</span></span>
-        </div>
-        <div class="timer-bar-bg">
-            <div id="timer" class="timer-bar"></div>
-        </div>
-        <div id="equation" class="equation">...</div>
-        <div class="btn-container">
-            <button class="btn-correct" onclick="checkAnswer(true)">TRUE ✔</button>
-            <button class="btn-wrong" onclick="checkAnswer(false)">FALSE ✖</button>
-        </div>
-    </div>
-
-    <!-- STEP 4: GAME OVER SCREEN -->
-    <div id="over-screen" class="hidden">
-        <h2>Game Over! 💥</h2>
-        <p style="font-size: 18px; margin: 5px 0; font-weight: 600;">ඔයාගේ Score එක: <b id="final-score" style="color: #00f0ff;">0</b></p>
-        <div id="rank-badge" class="badge">ගණිත ශූරයා</div>
-
-        <button class="btn-start" style="margin-top: 15px;" onclick="restartGame()">නැවත Play කරන්න 🔄</button>
-        <button class="btn-share" onclick="shareWhatsApp()">මිතුරන්ට Share කරන්න 📲</button>
-        <button class="btn-class" onclick="contactSir()">පන්ති සදහා සම්බන්ධ වෙන්න 📚</button>
-        <button class="btn-lesson" onclick="showLessonSection()">📖 පාඩම් ආශ්‍රිත ගැටලු (6-11)</button>
-        <button class="btn-time" onclick="showTimetable()">📅 කාලසටහන බලන්න</button>
-    </div>
-
-    <!-- STEP 5: TIMETABLE DISPLAY SCREEN -->
-    <div id="timetable-screen" class="hidden">
-        <div class="timetable-card">
-            <h3>📍 මිනුවන්ගොඩ WAYGA</h3>
-            <ul>
-                <li><b>9 වසර:</b> ඉරිදා ප.ව. 1:45 - 3:45</li>
-                <li><b>10 වසර:</b> ඉරිදා ප.ව. 3:45 - 5:45</li>
-                <li><b>11 වසර:</b> සඳුදා ප.ව. 4:00 - 6:00</li>
-                <li><b>10/11 Paper Class:</b> බ්‍රහස්පතින්දා ප.ව. 6:00 - 8:30</li>
-            </ul>
-            <h3>📍 ජා-ඇල SIP COLLEGE</h3>
-            <ul>
-                <li><b>7 වසර:</b> සිකුරාදා ප.ව. 4:00 - 6:00</li>
-                <li><b>8 වසර:</b> සෙනසුරාදා ප.ව. 5:30 - 7:30</li>
-                <li><b>11 වසර:</b> ඉරිදා පෙ.ව. 8:30 - 12:00</li>
-            </ul>
-            <h3>📍 උදම්මිට SIP COLLEGE</h3>
-            <ul>
-                <li><b>පන්ති පැවැත්වෙන වේලාවන් දැනගැනීම සඳහා අදම වට්සැප් පණිවිඩයක් එවන්න</b></li>
-            </ul>
-            <h3>🌐 ONLINE CLASSES</h3>
-            <ul>
-                <li><b>11 වසර:</b> ඉරිදා රාත්‍රී 9:00 - 11:00</li>
-                <li><b>10 වසර:</b> සිකුරාදා රාත්‍රී 9:00 - 11:00</li>
-                <li><b>9 වසර:</b> සඳුදා රාත්‍රී 9:00 - 11:00</li>
-            </ul>
-            <div class="timetable-note">
-                කාලසටහන් සහ විස්තර දැනගැනීමට <b>077 6752918</b> අංකයට වට්සැප් (WhatsApp) පණිවිඩයක් එවන්න.
-            </div>
-        </div>
-        <button class="btn-start" onclick="hideTimetable()" style="margin-top: 12px;">ආපසු මුල් පිටුවට 🔙</button>
-    </div>
-
-    <!-- STEP 6: LESSON-BASED PROBLEM SOLVING SECTION (6-11) -->
-    <div id="lesson-screen" class="hidden">
-        <div class="lesson-card">
-            <h3>📖 පාඩම් ආශ්‍රිත ගැටලු විසඳීම (ශ්‍රේණි 6 සිට 11 දක්වා)</h3>
-            <p style="text-align: center; color: #00f0ff; font-size: 12px; margin-bottom: 12px; font-weight: 600;">හෂාන් සර්ගේ විශේෂ ප්‍රශ්න බැංකුව</p>
-            
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>ශ්‍රේණිය තෝරන්න:</label>
-                <select id="lesson-grade-select" onchange="displayLessonQuestions()">
-                    <option value="6">Grade 6 ප්‍රශ්න</option>
-                    <option value="7">Grade 7 ප්‍රශ්න</option>
-                    <option value="8">Grade 8 ප්‍රශ්න</option>
-                    <option value="9">Grade 9 ප්‍රශ්න</option>
-                    <option value="10">Grade 10 ප්‍රශ්න</option>
-                    <option value="11">Grade 11 (O/L) ප්‍රශ්න</option>
-                </select>
-            </div>
-
-            <div id="lesson-questions-container">
-                <!-- Dynamic Questions will load here -->
-            </div>
-        </div>
-        <button class="btn-start" onclick="hideLessonSection()" style="margin-top: 12px;">ආපසු මුල් පිටුවට 🔙</button>
-    </div>
-
-    <div class="footer-promo">
-        📞 WhatsApp: <b>077 6752918</b> | හෂාන් බණ්ඩාර (Hashan Sir)
-    </div>
+<div class="hero">
+  <img src="sir.jpg" class="profile" alt="Hashan Sir" onerror="this.src='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;120&quot; height=&quot;120&quot;><rect width=&quot;100%&quot; height=&quot;100%&quot; fill=&quot;#101827&quot;/><text x=&quot;50%&quot; y=&quot;54%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; fill=&quot;#00f0ff&quot; font-size=&quot;42&quot;>HB</text></svg>')">
+  <div><h1>⚡ MATHS LOVE | GAMING MATHS</h1>
+  <p><b>හෂාන් බණ්ඩාර (Hashan Sir)</b><br>
+  📍 මිනුවන්ගොඩ WAYGA | ජා-ඇල & උදම්මිට SIP COLLEGE | 🌐 ONLINE</p></div>
 </div>
 
+<div class="panel"><h3>🏆 DAILY TOP 5 — <span id="date"></span></h3><ul id="lb" class="lb"><li>Leaderboard එක Load වෙනවා...</li></ul></div>
+
+<section id="home" class="panel">
+<h2>🎮 Maths Challenge</h2>
+<p>ශ්‍රේණිය + පාඩම තෝරලා timed challenge එකක් කරන්න.</p>
+<label>ශ්‍රේණිය</label><select id="grade"></select>
+<label>පාඩම</label><select id="topic"></select>
+<div class="grid" style="margin-top:9px">
+<button class="gold" onclick="showTimetable()">📅 කාලසටහන</button>
+<button class="purple" onclick="showLead()">👤 පන්ති විස්තර</button>
+</div>
+<button class="primary" onclick="goInfo()">🚀 CHALLENGE START</button>
+</section>
+
+<section id="lead" class="panel hidden">
+<h2>👤 අලුත් සිසුවෙක්ද?</h2>
+<p>ඔයාගේ නම, WhatsApp අංකය සහ වසර දාලා Game එක ආරම්භ කරන්න. Game එක අවසානයේ ඒ විස්තර Hashan Sirගේ WhatsApp එකට සෘජුවම යවන්න පුළුවන්.</p>
+<label>නම / Nickname</label><input id="name" placeholder="ඔයාගේ නම" required>
+<label>WhatsApp අංකය</label><input id="phone" inputmode="tel" placeholder="07XXXXXXXX" required>
+<label>ශ්‍රේණිය</label><select id="leadGrade"></select>
+<label>සම්බන්ධ වන පන්තිය</label>
+<select id="classType">
+<option value="Minuwangoda WAYGA">මිනුවන්ගොඩ - WAYGA</option>
+<option value="Ja-Ela SIP College">ජා-ඇල - SIP College</option>
+<option value="Udammita SIP College">උදම්මිට - SIP College</option>
+<option value="Online Class">Online Class</option>
+</select>
+<button class="primary" onclick="saveLeadAndPlay()">🎮 GAME එකට යන්න</button>
+<button class="wa" onclick="sendLeadNow()">📲 දැන්ම Sirට විස්තර යවන්න</button>
+<button class="gold" onclick="home()">🔙 ආපසු</button>
+</section>
+
+<section id="info" class="panel hidden">
+<h2>🎮 Player Profile</h2>
+<p>Leaderboard එකේ පෙන්වන්න නමක් දාන්න.</p>
+<label>Leaderboard නම</label><input id="gameName" placeholder="නම / Nickname">
+<button class="primary" onclick="startGame()">PLAY NOW 🔥</button>
+<button class="gold" onclick="showLead()">👤 මගේ විස්තර</button>
+</section>
+
+<section id="game" class="panel hidden">
+<div class="score"><span>🏆 Score: <b id="score">0</b></span><span>🔥 Combo: <b id="combo">0</b></span><span>Q <b id="qn">1</b>/10</span></div>
+<div class="timer-bg"><div id="timer" class="timer"></div></div>
+<div id="eq" class="eq"></div>
+<div class="grid"><button class="green" onclick="answer(true)">TRUE ✔</button><button class="red" onclick="answer(false)">FALSE ✖</button></div>
+<p class="note">⏱️ ප්‍රශ්නයට නියමිත කාලය ඉවර වුණොත් automatic next question යනවා.</p>
+</section>
+
+<section id="result" class="panel hidden" style="text-align:center">
+<h2>🏆 CHALLENGE COMPLETE!</h2><p>Score: <b id="final">0</b></p><div id="rank" class="badge"></div>
+<button class="primary" onclick="again()">🔄 PLAY AGAIN</button>
+<button class="wa" onclick="contactSir()">📲 පන්ති සඳහා Sirට විස්තර යවන්න</button>
+<button class="gold" onclick="showTimetable()">📅 කාලසටහන බලන්න</button>
+<button class="purple" onclick="showBank()">📖 මේ පාඩමේ ප්‍රශ්න 50</button>
+<button class="primary" onclick="home()">🏠 HOME</button>
+</section>
+
+<section id="timetable" class="panel hidden">
+<h2>📅 පන්ති කාලසටහන</h2>
+<div class="tcard"><h3>📍 මිනුවන්ගොඩ WAYGA</h3>
+<ul>
+<li><b>9 වසර:</b> ඉරිදා ප.ව. 1:45 - 3:45</li>
+<li><b>10 වසර:</b> ඉරිදා ප.ව. 4:00 - 6:00</li>
+<li><b>10/11 Paper Class:</b> බ්‍රහස්පතින්දා ප.ව. 6:00 - 8:30</li>
+</ul></div>
+<div class="tcard"><h3>📍 ජා-ඇල SIP COLLEGE</h3>
+<ul>
+<li><b>7 වසර:</b> සිකුරාදා ප.ව. 4:00 - 6:00</li>
+<li><b>8 වසර:</b> සෙනසුරාදා ප.ව. 5:30 - 7:30</li>
+<li><b>11 වසර:</b> ඉරිදා පෙ.ව. 8:30 - 12:00</li>
+</ul></div>
+<div class="tcard"><h3>📍 උදම්මිට SIP COLLEGE</h3>
+<ul><li><b>පන්ති වේලාවන් දැනගැනීමට අදම WhatsApp පණිවිඩයක් එවන්න.</b></li></ul></div>
+<div class="tcard"><h3>🌐 ONLINE CLASSES</h3>
+<ul>
+<li><b>11 වසර:</b> ඉරිදා රාත්‍රී 9:00 - 11:00</li>
+<li><b>10 වසර:</b> සිකුරාදා රාත්‍රී 9:00 - 11:00</li>
+<li><b>9 වසර:</b> සඳුදා රාත්‍රී 9:00 - 11:00</li>
+</ul></div>
+<p style="text-align:center;color:#ffd700">📲 කාලසටහන් සහ විස්තර: <b>077 6752918</b></p>
+<button class="wa" onclick="openWhatsApp()">📲 WhatsApp</button>
+<button class="primary" onclick="home()">🔙 HOME</button>
+</section>
+
+<section id="bank" class="panel hidden"><h2>📚 ප්‍රශ්න 50</h2><div id="bankList"></div>
+<button class="primary" onclick="home()">🔙 HOME</button></section>
+
+<p class="small" style="text-align:center;margin:14px 0 0">📞 WhatsApp: <b>077 6752918</b> | හෂාන් බණ්ඩාර (Hashan Sir)</p>
+</main></div>
+
 <script>
-    // SUPABASE CONFIGURATION
-    const SUPABASE_URL = 'https://olbtmrccdghenxtzslgx.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_rsPQaFPm5F5RGmTqht7e7g_x6_KkiYa';
-    
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // Audio Context (Sound Effects)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        if (type === 'correct') {
-            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.25);
-        } else if (type === 'wrong') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        }
-    }
-
-    // සියලුම ප්‍රශ්න බැංකුව (ඔබ ලබාදුන් සියලුම ප්‍රශ්න ඇතුළත් කර ඇත)
-    const examQuestions = {
-        "6": [
-            { q: "125 සහ 348 එකතු කළ විට කීයද?", a: 473 },
-            { q: "9 ගුණ කිරීම 7 කීයද?", a: 63 },
-            { q: "720, 8න් බෙදූ විට කීයද?", a: 90 },
-            { q: "1000න් 465ක් අඩු කළ විට කීයද?", a: 535 },
-            { q: "84, 4න් බෙදූ විට කීයද?", a: 21 },
-            { q: "450 සහ 550 එකතුව කීයද?", a: 1000 },
-            { q: "9 ගුණ කිරීම 9 කීයද?", a: 81 },
-            { q: "18 ගුණ කිරීම 5 කීයද?", a: 90 },
-            { q: "56 සිට 12ක් අඩු කළ විට කීයද?", a: 44 },
-            { q: "8 ගුණ කිරීම 8න් 4ක් අඩු කළ විට කීයද?", a: 60 },
-            { q: "36, 6න් බෙදා 4ක් එකතු කළ විට කීයද?", a: 10 },
-            { q: "13 ගුණ කිරීම 2 කීයද?", a: 26 },
-            { q: "14 ගුණ කිරීම 3 කීයද?", a: 42 },
-            { q: "99ට 1ක් එකතු කළ විට කීයද?", a: 100 },
-            { q: "25 ගුණ කිරීම 4 කීයද?", a: 100 },
-            { q: "10 ගුණ කිරීම 10 කීයද?", a: 100 },
-            { q: "0 සහ 5 එකතුව කීයද?", a: 5 },
-            { q: "200 කින් 100ක් අඩු කළ විට කීයද?", a: 100 },
-            { q: "1 සිට 5 දක්වා සංඛ්‍යාවල එකතුව කීයද?", a: 15 },
-            { q: "15 සහ 25 එකතුව කීයද?", a: 40 }
-        ],
-        "7": [
-            { q: "(-5) සහ (+12) එකතු කළ විට කීයද?", a: 7 },
-            { q: "(-8) සහ (-3) ගුණ කළ විට කීයද?", a: 24 },
-            { q: "(-20), 4න් බෙදූ විට කීයද?", a: -5 },
-            { q: "x + 3 = 10 නම් x හි අගය කීයද?", a: 7 },
-            { q: "5y = 35 නම් y හි අගය කීයද?", a: 7 },
-            { q: "a - 4 = 12 නම් a හි අගය කීයද?", a: 16 },
-            { q: "5 ගුණ කිරීම (3 + 2) සරල කළ විට කීයද?", a: 25 },
-            { q: "12 + 8 බෙදීම 2 සරල කළ විට කීයද?", a: 16 },
-            { q: "10 ගුණ කිරීම 5 කීයද?", a: 50 },
-            { q: "100න් 50ක් අඩු කළ විට කීයද?", a: 50 },
-            { q: "3 ගුණ කිරීම 9 කීයද?", a: 27 },
-            { q: "81 බෙදීම 9 කීයද?", a: 9 },
-            { q: "45ට 15ක් එකතු කළ විට කීයද?", a: 60 },
-            { q: "50න් 20%ක් කීයද?", a: 10 },
-            { q: "100න් 25%ක් කීයද?", a: 25 },
-            { q: "60න් 50%ක් කීයද?", a: 30 },
-            { q: "30 සහ 40 එකතුව කීයද?", a: 70 },
-            { q: "80න් 4න් බෙදූ විට කීයද?", a: 20 },
-            { q: "15 ගුණ කිරීම 2 කීයද?", a: 30 },
-            { q: "50න් 10ක් අඩු කළ විට කීයද?", a: 40 }
-        ],
-        "8": [
-            { q: "2x = 16 නම් x හි අගය කීයද?", a: 8 },
-            { q: "4x - 5 = 15 නම් x හි අගය කීයද?", a: 5 },
-            { q: "x / 2 = 6 නම් x හි අගය කීයද?", a: 12 },
-            { q: "5 - 2x = 1 නම් x හි අගය කීයද?", a: 2 },
-            { q: "(-3) × (-4) + 2 සරල කළ විට කීයද?", a: 14 },
-            { q: "5x + 3 = 2x + 15 නම් x හි අගය කීයද?", a: 4 },
-            { q: "3x = 21 නම් x හි අගය කීයද?", a: 7 },
-            { q: "4a = 36 නම් a හි අගය කීයද?", a: 9 },
-            { q: "7y = 42 නම් y හි අගය කීයද?", a: 6 },
-            { q: "m + 15 = 25 නම් m හි අගය කීයද?", a: 10 },
-            { q: "p - 10 = 20 නම් p හි අගය කීයද?", a: 30 },
-            { q: "12 ගුණ කිරීම 12 කීයද?", a: 144 },
-            { q: "25 ගුණ කිරීම 2 කීයද?", a: 50 },
-            { q: "50 ගුණ කිරීම 2 කීයද?", a: 100 },
-            { q: "80 බෙදීම 4 කීයද?", a: 20 },
-            { q: "90 බෙදීම 3 කීයද?", a: 30 },
-            { q: "100 බෙදීම 5 කීයද?", a: 20 },
-            { q: "18 සහ 12 එකතුව කීයද?", a: 30 },
-            { q: "75න් 25ක් අඩු කළ විට කීයද?", a: 50 },
-            { q: "11 ගුණ කිරීම 5 කීයද?", a: 55 }
-        ],
-        "9": [
-            { q: "2x + 5 = 15 නම් x හි අගය කීයද?", a: 5 },
-            { q: "3(2x - 1) = 15 නම් x හි අගය කීයද?", a: 3 },
-            { q: "x/3 + 2 = 5 නම් x හි අගය කීයද?", a: 9 },
-            { q: "2x + y = 8 සහ x = 3 නම් y හි අගය කීයද?", a: 2 },
-            { q: "4x = 28 නම් x හි අගය කීයද?", a: 7 },
-            { q: "5y = 45 නම් y හි අගය කීයද?", a: 9 },
-            { q: "6a = 54 නම් a හි අගය කීයද?", a: 9 },
-            { q: "3p + 2 = 14 නම් p හි අගය කීයද?", a: 4 },
-            { q: "5m - 4 = 16 නම් m හි අගය කීයද?", a: 4 },
-            { q: "2k + 7 = 17 නම් k හි අගය කීයද?", a: 5 },
-            { q: "11 ගුණ කිරීම 11 කීයද?", a: 121 },
-            { q: "12 ගුණ කිරීම 11 කීයද?", a: 132 },
-            { q: "13 ගුණ කිරීම 13 කීයද?", a: 169 },
-            { q: "14 ගුණ කිරීම 14 කීයද?", a: 196 },
-            { q: "15 ගුණ කිරීම 15 කීයද?", a: 225 },
-            { q: "144 බෙදීම 12 කීයද?", a: 12 },
-            { q: "169 බෙදීම 13 කීයද?", a: 13 },
-            { q: "225 බෙදීම 15 කීයද?", a: 15 },
-            { q: "500 සහ 250 එකතුව කීයද?", a: 750 },
-            { q: "1000න් 350ක් අඩු කළ විට කීයද?", a: 650 }
-        ],
-        "10": [
-            { q: "3(x - 1) = 2(x + 2) නම් x හි අගය කීයද?", a: 7 },
-            { q: "2x + 3 = 11 නම් x හි අගය කීයද?", a: 4 },
-            { q: "4x - 2 = 18 නම් x හි අගය කීයද?", a: 5 },
-            { q: "5x + 10 = 35 නම් x හි අගය කීයද?", a: 5 },
-            { q: "3y - 6 = 12 නම් y හි අගය කීයද?", a: 6 },
-            { q: "2a + 8 = 20 නම් a හි අගය කීයද?", a: 6 },
-            { q: "16 හි වර්ගමූලය කීයද?", a: 4 },
-            { q: "25 හි වර්ගමූලය කීයද?", a: 5 },
-            { q: "36 හි වර්ගමූලය කීයද?", a: 6 },
-            { q: "49 හි වර්ගමූලය කීයද?", a: 7 },
-            { q: "64 හි වර්ගමූලය කීයද?", a: 8 },
-            { q: "81 හි වර්ගමූලය කීයද?", a: 9 },
-            { q: "121 හි වර්ගමූලය කීයද?", a: 11 },
-            { q: "196 හි වර්ගමූලය කීයද?", a: 14 },
-            { q: "400 හි වර්ගමූලය කීයද?", a: 20 },
-            { q: "10 ගුණ කිරීම 10 ගුණ කිරීම 10 කීයද?", a: 1000 },
-            { q: "2 ගුණ කිරීම 2 ගුණ කිරීම 2 කීයද?", a: 8 },
-            { q: "15 ගුණ කිරීම 4 කීයද?", a: 60 },
-            { q: "180 බෙදීම 3 කීයද?", a: 60 },
-            { q: "450ට 550ක් එකතු කළ විට කීයද?", a: 1000 }
-        ],
-        "11": [
-            { q: "x + 5 = 12 නම් x හි අගය කීයද?", a: 7 },
-            { q: "x + y = 10 සහ x - y = 2 නම් x හි අගය කීයද?", a: 6 },
-            { q: "3x = 15 නම් x හි අගය කීයද?", a: 5 },
-            { q: "4y = 32 නම් y හි අගය කීයද?", a: 8 },
-            { q: "5a = 45 නම් a හි අගය කීයද?", a: 9 },
-            { q: "2p + 4 = 14 නම් p හි අගය කීයද?", a: 5 },
-            { q: "3m - 5 = 16 නම් m හි අගය කීයද?", a: 7 },
-            { q: "x^2 = 25 නම් x හි ධන අගය කීයද?", a: 5 },
-            { q: "y^2 = 49 නම් y හි ධන අගය කීයද?", a: 7 },
-            { q: "a^2 = 81 නම් a හි ධන අගය කීයද?", a: 9 },
-            { q: "m^2 = 100 නම් m හි ධන අගය කීයද?", a: 10 },
-            { q: "10 ගුණ කිරීම 5 කීයද?", a: 50 },
-            { q: "20 ගුණ කිරීම 5 කීයද?", a: 100 },
-            { q: "50 ගුණ කිරීම 10 කීයද?", a: 500 },
-            { q: "100 බෙදීම 2 කීයද?", a: 50 },
-            { q: "200 බෙදීම 4 කීයද?", a: 50 },
-            { q: "500 බෙදීම 5 කීයද?", a: 100 },
-            { q: "250 සහ 250 එකතුව කීයද?", a: 500 },
-            { q: "999ට 1ක් එකතු කළ විට කීයද?", a: 1000 },
-            { q: "72 බෙදීම 8 කීයද?", a: 9 }
-        ]
-    };
-
-    let basicStep = 1, basicAnswer = true, score = 0, currentAnswer = true, timerInterval;
-    const timeLimit = 8000;
-    let startTime, userName = "", userPhone = "", selectedGrade = "6", selectedType = "";
-
-    async function loadLeaderboard() {
-        const listEl = document.getElementById('leaderboard-list');
-        try {
-            // අද දිනට (Today) අදාළ දත්ත පමණක් ලබා ගැනීමට හෝ සම්පූර්ණ ලීඩර්බෝඩ් එක පෙන්වීමට
-            const todayStr = new Date().toISOString().split('T')[0];
-            const { data, error } = await supabaseClient
-                .from('leaderboard')
-                .select('*')
-                .gte('created_at', todayStr + 'T00:00:00') // දවසේ ආරම්භයේ සිට පමණක් පෙරළීම (Reset at midnight functionality)
-                .order('score', { ascending: false })
-                .limit(5);
-
-            if (error || !data || data.length === 0) {
-                // යම් හෙයකින් created_at කالم් එක නැතහොත් සාමාන්‍ය පරිදි ටොප් 5 පෙන්වන්න
-                const { data: fallbackData } = await supabaseClient
-                    .from('leaderboard')
-                    .select('*')
-                    .order('score', { ascending: false })
-                    .limit(5);
-
-                if (!fallbackData || fallbackData.length === 0) {
-                    listEl.innerHTML = '<li class="leaderboard-item"><span>තවම Scores නැත. පළමුවැන්නා වෙන්න!</span></li>';
-                    return;
-                }
-                renderLeaderboardList(fallbackData, listEl);
-                return;
-            }
-
-            renderLeaderboardList(data, listEl);
-        } catch (e) {
-            console.error(e);
-            listEl.innerHTML = '<li class="leaderboard-item"><span>Leaderboard එක Load කිරීමට නොහැකි විය.</span></li>';
-        }
-    }
-
-    function renderLeaderboardList(data, listEl) {
-        listEl.innerHTML = '';
-        data.forEach((item, index) => {
-            let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
-            listEl.innerHTML += `<li class="leaderboard-item">
-                <span>${medal} ${item.name || 'Anonymous'} (Gr. ${item.grade || '-'})</span>
-                <span><b>${item.score || 0} pts</b></span>
-            </li>`;
-        });
-    }
-
-    loadLeaderboard();
-    generateBasicQuestion();
-
-    function generateBasicQuestion() {
-        document.getElementById('basic-step').innerText = basicStep;
-        let n1 = Math.floor(Math.random() * 10) + 1, n2 = Math.floor(Math.random() * 10) + 1;
-        let ans = n1 + n2;
-        basicAnswer = Math.random() >= 0.5;
-        let shownAns = basicAnswer ? ans : ans + (Math.random() > 0.5 ? 1 : -1);
-        if(!basicAnswer && shownAns === ans) shownAns += 1;
-        document.getElementById('basic-equation').innerText = `${n1} + ${n2} = ${shownAns}`;
-    }
-
-    function checkBasicAnswer(userAns) {
-        if (userAns === basicAnswer) playSound('correct'); else playSound('wrong');
-        if (basicStep < 3) { basicStep++; generateBasicQuestion(); }
-        else {
-            document.getElementById('basic-screen').classList.add('hidden');
-            document.getElementById('info-screen').classList.remove('hidden');
-        }
-    }
-
-    function submitInfo() {
-        userName = document.getElementById('user-name').value;
-        userPhone = document.getElementById('user-phone').value;
-        if (!userName || !userPhone || userPhone.length < 9) {
-            alert("කරුණාකර නම සහ නිවැරදි WhatsApp අංකය ලබාදෙන්න!");
-            return;
-        }
-        selectedGrade = document.getElementById('user-grade').value;
-        selectedType = document.getElementById('user-type').value;
-        document.getElementById('display-grade').innerText = selectedGrade;
-
-        let form = document.getElementById('lead-form');
-        let formData = new FormData(form);
-        fetch('/', { method: 'POST', body: formData }).catch(e => console.log(e));
-
-        document.getElementById('info-screen').classList.add('hidden');
-        document.getElementById('play-screen').classList.remove('hidden');
-        score = 0; document.getElementById('score').innerText = score;
-        nextQuestion();
-    }
-
-    function generateEquation() {
-        let questionsList = examQuestions[selectedGrade] || examQuestions["6"];
-        let randomQ = questionsList[Math.floor(Math.random() * questionsList.length)];
-        
-        let isCorrect = Math.random() >= 0.5;
-        let displayedAnswer = randomQ.a;
-
-        if (!isCorrect && typeof randomQ.a === 'number') {
-            displayedAnswer = randomQ.a + (Math.random() > 0.5 ? 2 : -2);
-        }
-
-        currentAnswer = isCorrect;
-        document.getElementById('equation').innerText = `${randomQ.q}\n\n(පිළිතුර: ${displayedAnswer})`;
-    }
-
-    function nextQuestion() {
-        clearInterval(timerInterval);
-        generateEquation();
-        startTimer();
-    }
-
-    function startTimer() {
-        const timerEl = document.getElementById('timer');
-        timerEl.style.width = '100%';
-        startTime = Date.now();
-        timerInterval = setInterval(() => {
-            const elapsedTime = Date.now() - startTime;
-            const remainingPercent = Math.max(0, 100 - (elapsedTime / timeLimit) * 100);
-            timerEl.style.width = remainingPercent + '%';
-            if (elapsedTime >= timeLimit) { playSound('wrong'); gameOver(); }
-        }, 50);
-    }
-
-    function checkAnswer(userAnswer) {
-        if (userAnswer === currentAnswer) {
-            playSound('correct'); score++;
-            document.getElementById('score').innerText = score;
-            nextQuestion();
-        } else { playSound('wrong'); gameOver(); }
-    }
-
-    async function gameOver() {
-        clearInterval(timerInterval);
-        document.getElementById('final-score').innerText = score;
-        document.getElementById('final-score-field').value = score;
-
-        if (score > 0 && userName) {
-            try {
-                await supabaseClient.from('leaderboard').insert([
-                    { name: userName, grade: selectedGrade, score: score }
-                ]);
-            } catch (err) {
-                console.error(err);
-            }
-            await loadLeaderboard();
-        }
-
-        let rank = "ගණිත ආධුනිකයා 📘";
-        if (score > 15) rank = "ගණිත විශාරද 🥇";
-        else if (score > 8) rank = "ගණිත ශූරයා 🏆";
-        else if (score > 3) rank = "ගණිත තරුව 🌟";
-        document.getElementById('rank-badge').innerText = rank;
-
-        document.getElementById('play-screen').classList.add('hidden');
-        document.getElementById('over-screen').classList.remove('hidden');
-    }
-
-    function restartGame() {
-        document.getElementById('over-screen').classList.add('hidden');
-        document.getElementById('play-screen').classList.remove('hidden');
-        score = 0; document.getElementById('score').innerText = score;
-        nextQuestion();
-    }
-
-    function showTimetable() {
-        document.getElementById('basic-screen').classList.add('hidden');
-        document.getElementById('over-screen').classList.add('hidden');
-        document.getElementById('timetable-screen').classList.remove('hidden');
-    }
-
-    function hideTimetable() {
-        document.getElementById('timetable-screen').classList.add('hidden');
-        document.getElementById('basic-screen').classList.remove('hidden');
-    }
-
-    function showLessonSection() {
-        document.getElementById('basic-screen').classList.add('hidden');
-        document.getElementById('over-screen').classList.add('hidden');
-        document.getElementById('lesson-screen').classList.remove('hidden');
-        displayLessonQuestions();
-    }
-
-    function hideLessonSection() {
-        document.getElementById('lesson-screen').classList.add('hidden');
-        document.getElementById('basic-screen').classList.remove('hidden');
-    }
-
-    function displayLessonQuestions() {
-        const grade = document.getElementById('lesson-grade-select').value;
-        const container = document.getElementById('lesson-questions-container');
-        const qList = examQuestions[grade] || [];
-
-        let html = '';
-        qList.forEach((item, index) => {
-            html += `
-                <div class="lesson-item">
-                    <b>ප්‍රශ්න ${index + 1}:</b> ${item.q}
-                    <span class="lesson-ans">✔ නිවැරදි පිළිතුර: <b>${item.a}</b></span>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    function shareWhatsApp() {
-        const text = `මම Hashan Sirගේ Speed Math Challenge එකෙන් Grade ${selectedGrade} වලින් ලකුණු ${score}ක් ගත්තා! 🔥 ඔයාට පුළුවන්ද මාව පරද්දන්න? දැන්ම Play කරන්න: ${window.location.href}`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-    }
-
-    function contactSir() {
-        const text = `හෂාන් සර්, මම Speed Math Game එක ප්ලේ කළා.
-මගේ විස්තර:
-- Name: ${userName}
-- Grade: ${selectedGrade}
-- WhatsApp: ${userPhone}
-- Preference: ${selectedType}
-- Score: ${score}
-
-මට ගණිතය පන්තියට සම්බන්ධ වෙන විස්තර ලබාදෙන්න.`;
-        window.open(`https://api.whatsapp.com/send?phone=94776752918&text=${encodeURIComponent(text)}`, '_blank');
-    }
+const SUPABASE_URL="https://olbtmrccdghenxtzslgx.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_rsPQaFPm5F5RGmTqht7e7g_x6_KkiYa";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const DATA={"6":[{"lesson":"වුර්ත","q":"වෘත්තයක මධ්‍ය ලක්ෂ්‍යයේ සිට වෘත්තයේ ලක්ෂ්‍යයකට ඇති දුර අරය ලෙස හැඳින්වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"විෂ්කම්භය අරයේ දෙගුණයකි.","a":"ඔව්"},{"lesson":"වුර්ත","q":"විෂ්කම්භය 18 cm නම් අරය 9 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"අරය 7 cm නම් විෂ්කම්භය 21 cm වේ.","a":"නැත"},{"lesson":"වුර්ත","q":"විෂ්කම්භය 20 cm නම් අරය 10 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"වෘත්තයක සියලු අර සමාන දිගින් යුක්ත වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"මධ්‍ය ලක්ෂ්‍යය වෘත්තය මත පිහිටයි.","a":"නැත"},{"lesson":"වුර්ත","q":"අරය 5 cm නම් විෂ්කම්භය 10 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"විෂ්කම්භය 16 cm නම් අරය 8 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"අරය විෂ්කම්භයට වඩා දෙගුණයකි.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"5,432 හි 5 හි ස්ථානීය අගය 5,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"7,086 හි 8 හි ස්ථානීය අගය 800 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"34,521 හි 4 හි ස්ථානීය අගය 4,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"90,007 හි 9 හි ස්ථානීය අගය 90,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"6,305 හි 3 හි ස්ථානීය අගය 30 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"48,219 හි 2 හි ස්ථානීය අගය 200 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"70,405 හි 4 හි ස්ථානීය අගය 400 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"12,345 හි 1 හි ස්ථානීය අගය 1,000 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"56,789 හි 8 හි ස්ථානීය අගය 80 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"4,321 හි 3 හි ස්ථානීය අගය 300 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"8,765 හි 7 හි ස්ථානීය අගය 700 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"25,104 හි 5 හි ස්ථානීය අගය 5,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"61,230 හි 6 හි ස්ථානීය අගය 6,000 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"3,908 හි 9 හි ස්ථානීය අගය 900 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"42,006 හි 2 හි ස්ථානීය අගය 2,000 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"125 + 378 = 503 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"900 - 456 = 444 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"24 × 6 = 124 වේ.","a":"නැත"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"360 ÷ 9 = 40 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"45 + 27 - 12 = 60 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"8 × 7 + 6 = 62 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"100 - 8 × 5 = 60 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"72 ÷ 8 + 9 = 18 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"15 × 4 - 20 = 50 වේ.","a":"නැත"},{"lesson":"পূর্ণ සංඛ්‍යා මත ගණිත කර්ම","q":"(18 + 12) ÷ 5 = 6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"7 × (10 - 4) = 42 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"250 + 150 - 75 = 325 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"96 ÷ 12 × 5 = 40 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"30 + 5 × 6 = 60 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(40 - 16) ÷ 4 = 6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"9 × 9 - 20 = 61 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"144 ÷ 12 + 8 = 20 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"35 + 65 ÷ 5 = 48 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(25 + 15) × 2 = 80 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"500 - 125 × 2 = 250 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"64 ÷ 8 + 7 = 15 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"18 + 24 = 42 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"81 ÷ 9 = 9 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"7 × 8 = 54 වේ.","a":"නැත"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"600 - 275 = 325 වේ.","a":"ඔව්"}],"7":[{"lesson":"සමමිතිය","q":"සමමිතියෙන් රූපයක් සමාන කොටස් දෙකකට බෙදන රේඛාව සමමිති අක්ෂයයි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සමචතුරස්‍රයක සමමිති අක්ෂ 4ක් ඇත.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සෘජුකෝණාස්‍රයක සමමිති අක්ෂ 3ක් ඇත.","a":"නැත"},{"lesson":"සමමිතිය","q":"සමපාර්ශ්වික ත්‍රිකෝණයක සමමිති අක්ෂ 3ක් ඇත.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සමද්විපාද ත්‍රිකෝණයක සමමිති අක්ෂ 1ක් ඇත.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"වෘත්තයක සමමිති අක්ෂ අසීමිත ගණනකි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සමචතුරස්‍රයක භ්‍රමණ සමමිතියේ අනුපිළිවෙළ 4කි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සෘජුකෝණාස්‍රයක භ්‍රමණ සමමිතියේ අනුපිළිවෙළ 3කි.","a":"නැත"},{"lesson":"සමමිතිය","q":"සමපාර්ශ්වික ත්‍රිකෝණයක භ්‍රමණ සමමිතියේ අනුපිළිවෙළ 3කි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"පරාවර්තනයේදී අක්ෂයට ඇති දුර වෙනස් නොවේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={1,2,3,4} හි සාමාජිකයන් 4කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A={a,e,i,o,u} හි සාමාජිකයන් 4කි.","a":"නැත"},{"lesson":"කුලක","q":"හිස් කුලකයක සාමාජිකයන් ගණන 0කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A={2,4,6}, B={4,6,8} නම් A∩B={4,6} වේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={1,2,3}, B={3,4,5} නම් A∪B={1,2,3,4,5} වේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={1,2,3,4} නම් 3∈A වේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={5,7,9} නම් 6∈A වේ.","a":"නැත"},{"lesson":"කුලක","q":"A={1,2,3} හි උපකුලක ගණන 8කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A={a,b} හි උපකුලක ගණන 4කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A∩∅ = ∅ වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-8)+13=5 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-12)-5=-17 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-6)×(-7)=42 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-48)÷6=-8 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"15+(-9)=6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-20)+(-15)=35 වේ.","a":"නැත"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-9)×4=-36 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"56÷(-7)=-8 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-5)+8-3=0 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"12-(-7)=19 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-4)×(-5)+3=23 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"30+(-12)÷3=26 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-18)÷3-4=-10 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"7-(-8)+2=17 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-3)×6+5=-13 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-40)+25=-15 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"64÷(-8)+10=2 වේ.","a":"ඔව්"},{"lesson":"পূර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-7)×(-3)-5=16 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"18-25+4=-3 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-2)×(-9)÷3=6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-15)+7=-8 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-24)÷(-6)=4 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"9-(-4)=13 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-5)×7=-35 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"36÷(-4)=-9 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-10)+(-6)=-16 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"20-(-5)=15 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-3)×(-8)=24 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"42÷7=6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-6)+(-4)=-10 වේ.","a":"ඔව්"}],"8":[{"lesson":"සංඛ්‍යා රටා","q":"2,5,8,11,... හි ඊළඟ පදය 14 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"4,8,12,16,... හි ඊළඟ පදය 20 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"3,6,12,24,... හි ඊළඟ පදය 48 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"20,17,14,11,... හි ඊළඟ පදය 8 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"1,4,9,16,... හි ඊළඟ පදය 25 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"5,10,15,20,... හි 6 වන පදය 30 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"2,4,8,16,... හි 6 වන පදය 64 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"30,25,20,15,... හි ඊළඟ පදය 10 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"7,14,21,28,... හි ඊළඟ පදය 35 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"100,90,80,70,... හි ඊළඟ පදය 60 වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"පැත්ත 6 cm වූ සමචතුරස්‍රයක පරිමිතිය 24 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 10 cm හා පළල 5 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 30 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමපාර්ශ්වික ත්‍රිකෝණයක පැත්ත 8 cm නම් පරිමිතිය 24 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 12 m හා පළල 7 m වූ සෘජුකෝණාස්‍රයක පරිමිතිය 38 m වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පරිමිතිය 36 cm නම් පැත්ත 9 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සෘජුකෝණාස්‍රයක පරිමිතිය 50 cm හා දිග 15 cm නම් පළල 10 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"ත්‍රිකෝණයක පැති 5,7,9 cm නම් පරිමිතිය 21 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"පැති 4 cm බැගින් වූ නිත්‍ය පංචභුජයක පරිමිතිය 20 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පැත්ත 12 m නම් පරිමිතිය 48 m වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 8 cm, පළල 3 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 22 cm වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සෘජු කෝණයක විශාලත්වය 90° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සරල කෝණයක විශාලත්වය 180° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"පූර්ණ කෝණයක විශාලත්වය 360° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"45° කෝණයක් තියුණු කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"120° කෝණයක් තියුණු කෝණයකි.","a":"නැත"},{"lesson":"කෝණ","q":"90° ට අඩු කෝණයක් තියුණු කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"90°-180° අතර කෝණයක් මන්ද කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"සිරස්විරුද්ධ කෝණ දෙකක් එකක් 70° නම් අනෙක 70° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සරල රේඛාවක එක් කෝණයක් 65° නම් අනෙක් කෝණය 115° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"ත්‍රිකෝණයක කෝණ දෙක 50° හා 60° නම් තුන්වන කෝණය 70° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සෘජුකෝණාස්‍රයක එක් කෝණයක් 90° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සමපාර්ශ්වික ත්‍රිකෝණයක එක් කෝණයක් 60° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"45° සහ 35° එකතුව 80° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"140° කෝණයක සම්පූරක කෝණය 40° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"25° කෝණයක සම්පූරක කෝණය 65° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"110° සහ 70° එකතුව 180° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"ත්‍රිකෝණයක අභ්‍යන්තර කෝණ එකතුව 180° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සෘජු කෝණ දෙකක එකතුව 180° වේ.","a":"නැත"},{"lesson":"කෝණ","q":"පූර්ණ කෝණයකින් 90° අඩු කළ විට 270° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"80° කෝණයක සම්පූරක කෝණය 10° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"30° කෝණයක් මන්ද කෝණයකි.","a":"නැත"},{"lesson":"කෝණ","q":"90° කෝණයක් තියුණු කෝණයකි.","a":"නැත"},{"lesson":"කෝණ","q":"180° කෝණයක් සරල කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"360° කෝණයක් පූර්ණ කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"100° කෝණයක් මන්ද කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"20° සහ 70° එකතුව 100° වේ.","a":"නැත"},{"lesson":"කෝණ","q":"150° කෝණයක සම්පූරක කෝණය 30° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"35° කෝණයක සම්පූරක කෝණය 55° වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"පැත්ත 11 cm වූ සමචතුරස්‍රයක පරිමිතිය 44 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 16 cm හා පළල 4 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 40 cm වේ.","a":"ඔව්"}],"9":[{"lesson":"සංඛ්‍යා රටා","q":"5,9,13,17,... හි ඊළඟ පදය 21 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"2,6,18,54,... හි ඊළඟ පදය 162 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"50,45,40,35,... හි ඊළඟ පදය 30 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"1,3,5,7,... හි 10 වන පදය 19 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"4,9,14,19,... හි 8 වන පදය 39 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"3,6,9,12,... හි n වන පදය 3n වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"7,12,17,22,... හි ඊළඟ පදය 27 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"100,80,60,40,... හි ඊළඟ පදය 20 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"2,5,10,17,... හි ඊළඟ පදය 26 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"1,4,7,10,... හි 12 වන පදය 34 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1011₂ දශමයට 11 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1101₂ දශමයට 13 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"13₁₀ = 1101₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"8₁₀ = 1000₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"10000₂ දශමයට 16 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1111₂ දශමයට 15 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"5₁₀ = 101₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"101₂ + 10₂ = 111₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"110₂ + 11₂ = 1001₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1001₂ - 1₂ = 1000₂ වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/2 + 1/4 = 3/4 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/5 - 1/5 = 2/5 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/3 × 3/4 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 ÷ 1/2 = 3/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 1/2 + 2 1/2 = 4 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 - 1/3 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/5 + 1/10 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/8 - 3/8 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/9 × 3/8 = 1/6 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 ÷ 5/12 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/7 + 2/7 = 5/7 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"11/12 - 5/12 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/3 × 9/10 = 3/5 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/5 ÷ 2/5 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/4 + 2/3 = 11/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/10 - 1/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/8 × 4/9 = 1/6 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/12 + 1/6 = 7/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2 1/4 - 1 1/2 = 3/4 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/5 ÷ 9/10 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/7 + 3/7 = 5/7 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/9 - 2/9 = 1/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 × 8/9 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/8 ÷ 7/16 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/2 + 2/5 = 9/10 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 × 3/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/9 ÷ 2/3 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 2/3 - 2/3 = 1 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/10 + 1/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/5 + 1/10 = 9/10 වේ.","a":"ඔව්"}],"10":[{"lesson":"පරිමිතිය","q":"පැත්ත 9 cm වූ සමචතුරස්‍රයක පරිමිතිය 36 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 14 cm හා පළල 6 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 40 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"ත්‍රිකෝණයක පැති 8,11,13 cm නම් පරිමිතිය 32 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පරිමිතිය 52 cm නම් පැත්ත 13 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සෘජුකෝණාස්‍රයක පරිමිතිය 64 cm, දිග 20 cm නම් පළල 12 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"නිත්‍ය ෂඩ්භුජයක එක් පැත්ත 7 cm නම් පරිමිතිය 42 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 18 m හා පළල 9 m වූ සෘජුකෝණාස්‍රයක පරිමිතිය 54 m වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමද්විපාද ත්‍රිකෝණයක සමාන පැති 10 cm හා පාදය 12 cm නම් පරිමිතිය 32 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සෘජුකෝණාස්‍රයක පරිමිතිය 90 cm හා පළල 15 cm නම් දිග 30 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පරිමිතිය 100 m නම් පැත්ත 25 m වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√144 = 12 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√225 = 15 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√324 = 18 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√400 = 20 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√625 = 25 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√729 = 27 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√900 = 30 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√1024 = 32 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√121 = 11 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√169 = 13 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√196 = 14 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√256 = 16 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√289 = 17 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√361 = 19 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√441 = 21 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√484 = 22 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√529 = 23 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√676 = 26 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√784 = 28 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√841 = 29 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/3 + 1/6 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/8 - 1/4 = 3/8 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/5 × 10/9 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/9 ÷ 14/27 = 3/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2 1/3 + 1 1/6 = 3 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/12 + 1/4 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/10 - 3/20 = 11/20 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/7 × 14/9 = 8/9 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 ÷ 3/8 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 3/4 - 2/3 = 13/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 + 7/12 = 17/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"9/10 - 2/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/3 × 3/5 = 2/5 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/8 ÷ 5/16 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 + 5/8 = 11/8 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/12 - 1/8 = 11/24 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2 1/2 × 2/5 = 1 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/7 ÷ 6/7 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 1/3 + 2/3 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/5 - 1/10 = 7/10 වේ.","a":"ඔව්"}],"11":[{"lesson":"තාත්වික සංඛ්‍යා","q":"√2 යනු පරිමේය සංඛ්‍යාවකි.","a":"නැත"},{"lesson":"තාත්වික සංඛ්‍යා","q":"1/2 යනු පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"π යනු පරිමේය සංඛ්‍යාවකි.","a":"නැත"},{"lesson":"තාත්වික සංඛ්‍යා","q":"0 යනු පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√9 = 3 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√25 = 5 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√49 = 7 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"2.75 පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√16/√4 = 2 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"3/4 + 1/4 = 1 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√81 = 9 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√100 = 10 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"-5 යනු පූර්ණ සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"1.234 යනු පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√3 යනු අපරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"2³ = 8 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"5² = 25 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"10³ = 1000 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"2⁵ = 32 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"3⁴ = 81 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"a² × a³ = a⁵ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"x⁷ ÷ x² = x⁵ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"(a²)³ = a⁶ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"2⁰ = 1 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"10⁻² = 1/100 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₁₀100 = 2 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₁₀1000 = 3 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₂8 = 3 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₃27 = 3 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₅25 = 2 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"10² × 10³ = 10⁵ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"3⁵ ÷ 3² = 3³ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"4³ = 64 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"8² = 64 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"√(10²) = 10 වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පැත්ත 6 cm වූ සමචතුරස්‍රයක වර්ගඵලය 36 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"දිග 12 cm හා පළල 5 cm වූ සෘජුකෝණාස්‍රයක වර්ගඵලය 60 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 10 cm හා උස 6 cm වූ ත්‍රිකෝණයක වර්ගඵලය 30 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"අරය 7 cm වූ වෘත්තයක වර්ගඵලය, π=22/7 ලෙස, 154 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 8 cm හා උස 5 cm වූ සමාන්තරචතුරස්‍රයක වර්ගඵලය 40 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාද 12 cm හා උස 4 cm වූ ත්‍රිකෝණයක වර්ගඵලය 24 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පැත්ත 15 m වූ සමචතුරස්‍රයක වර්ගඵලය 225 m² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"දිග 20 m හා පළල 8 m වූ සෘජුකෝණාස්‍රයක වර්ගඵලය 160 m² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"අරය 14 cm වූ වෘත්තයක වර්ගඵලය, π=22/7 ලෙස, 616 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 15 cm හා උස 8 cm වූ ත්‍රිකෝණයක වර්ගඵලය 60 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"වර්ගඵලය 72 cm² සහ පළල 8 cm වූ සෘජුකෝණාස්‍රයක දිග 9 cm වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"වර්ගඵලය 121 cm² වූ සමචතුරස්‍රයක පැත්ත 11 cm වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 20 cm හා උස 9 cm වූ සමාන්තරචතුරස්‍රයක වර්ගඵලය 180 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"අරය 3 cm වූ වෘත්තයක වර්ගඵලය 9π cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"දිග 9 cm හා පළල 7 cm වූ සෘජුකෝණාස්‍රයක වර්ගඵලය 63 cm² වේ.","a":"ඔව්"}]};
+const TOPICS={6:["වුර්ත","ස්තානීය අගය","පූර්ණ සංඛ්‍යා මත ගණිත කර්ම"],7:["සමමිතිය","කුලක","පූර්ණ සංඛ්‍යා මත ගණිත කර්ම"],8:["සංඛ්‍යා රටා","පරිමිතිය","කෝණ"],9:["සංඛ්‍යා රටා","සංක්‍යා පාද","භාග"],10:["පරිමිතිය","වර්ගමූලය","භාග"],11:["තාත්වික සංඛ්‍යා","දර්ශක හා ලඝු","ගණ වස්තු වල වර්ගඵලය"]};
+let grade="6",topic="",qs=[],i=0,score=0,combo=0,correct=false,timer=null,player="",userName="",userPhone="",selectedType="";
+const today=()=>new Date().toLocaleDateString("en-CA");
+document.getElementById("date").textContent=today();
+document.getElementById("grade").innerHTML=Object.keys(TOPICS).map(g=>`<option value="${g}">${g} වසර</option>`).join("");
+document.getElementById("leadGrade").innerHTML=Object.keys(TOPICS).map(g=>`<option value="${g}">Grade ${g}</option>`).join("");
+function fillTopics(){grade=document.getElementById("grade").value;document.getElementById("topic").innerHTML=TOPICS[grade].map(t=>`<option>${t}</option>`).join("")}
+document.getElementById("grade").onchange=fillTopics;fillTopics();
+function hide(){["home","lead","info","game","result","timetable","bank"].forEach(x=>document.getElementById(x).classList.add("hidden"))}
+function home(){hide();document.getElementById("home").classList.remove("hidden")}
+function showTimetable(){hide();document.getElementById("timetable").classList.remove("hidden")}
+function showLead(){hide();document.getElementById("lead").classList.remove("hidden")}
+function goInfo(){grade=document.getElementById("grade").value;topic=document.getElementById("topic").value;hide();document.getElementById("info").classList.remove("hidden")}
+function saveLeadAndPlay(){
+ userName=document.getElementById("name").value.trim();userPhone=document.getElementById("phone").value.trim();
+ selectedType=document.getElementById("classType").value;grade=document.getElementById("leadGrade").value;
+ if(!userName||!userPhone)return alert("නම සහ WhatsApp අංකය දාන්න.");
+ document.getElementById("gameName").value=userName;document.getElementById("grade").value=grade;fillTopics();goInfo();
+}
+function startGame(){
+ player=document.getElementById("gameName").value.trim()||userName||"Anonymous";
+ grade=document.getElementById("grade").value;topic=document.getElementById("topic").value;
+ qs=(DATA[grade]||[]).filter(x=>x.lesson===topic).sort(()=>Math.random()-.5).slice(0,10);
+ i=0;score=0;combo=0;hide();document.getElementById("game").classList.remove("hidden");next();
+}
+function wrong(a){if(a==="ඔව්")return"නැත";if(a==="නැත")return"ඔව්";let m=a.match(/-?\d+(?:\.\d+)?/);return m?a.replace(m[0],String(Number(m[0])+1)):a+" (වැරදි)"}
+function next(){
+ clearInterval(timer);if(i>=qs.length)return finish();let x=qs[i];correct=Math.random()>.5;
+ document.getElementById("eq").textContent=x.q+"\n\nපිළිතුර: "+(correct?x.a:wrong(x.a));
+ document.getElementById("qn").textContent=i+1;document.getElementById("score").textContent=score;document.getElementById("combo").textContent=combo;
+ let seconds=(topic==="භාග"||topic==="දර්ශක හා ලඝු"||topic==="ගණ වස්තු වල වර්ගඵලය")?20:15,total=seconds*1000,left=total;
+ timer=setInterval(()=>{left-=50;document.getElementById("timer").style.width=Math.max(0,left/total*100)+"%";if(left<=0){clearInterval(timer);fx(false,"⏰ TIME UP!");setTimeout(()=>{i++;next()},350)}},50)
+}
+function answer(v){clearInterval(timer);if(v===correct){combo++;let p=1+Math.min(combo,4);score+=p;fx(true,"🔥 +"+p)}else{combo=0;fx(false,"❌ WRONG")}setTimeout(()=>{i++;next()},300)}
+function fx(good,text){let f=document.getElementById("feedback");f.textContent=text;f.className="feedback show "+(good?"good":"bad");setTimeout(()=>f.className="feedback",650)}
+async function finish(){
+ hide();document.getElementById("result").classList.remove("hidden");document.getElementById("final").textContent=score;
+ document.getElementById("rank").textContent=score>=35?"🏆 LEGENDARY MATH MASTER":score>=25?"🥇 MATH CHAMPION":score>=15?"🔥 MATH HERO":"📘 MATH ROOKIE";
+ try{await sb.from("leaderboard").insert([{name:player,grade:grade,score:score,topic:topic,game_date:today()}])}catch(e){console.log(e)}loadLB();
+}
+function again(){goInfo()}
+function showBank(){let arr=(DATA[grade]||[]).filter(x=>x.lesson===topic);hide();document.getElementById("bank").classList.remove("hidden");document.getElementById("bankList").innerHTML=arr.map((x,n)=>`<div class="q" onclick="this.classList.toggle('show')"><b>ප්‍රශ්නය ${n+1}</b><br>${x.q}<div class="ans">✔ පිළිතුර: ${x.a}</div></div>`).join("")}
+async function loadLB(){try{let{data,error}=await sb.from("leaderboard").select("*").eq("game_date",today()).order("score",{ascending:false}).limit(5);if(error)throw error;document.getElementById("lb").innerHTML=data?.length?data.map((x,n)=>`<li><span>${["🥇","🥈","🥉","⭐","⭐"][n]} ${x.name||"Anonymous"} — Gr.${x.grade||"-"}</span><b>${x.score} pts</b></li>`).join(""):"<li>අද තවම scores නැහැ 🚀</li>"}catch(e){document.getElementById("lb").innerHTML="<li>Leaderboard එක Load කිරීමට නොහැකි විය.</li>"}}
+function openWhatsApp(){window.open("https://api.whatsapp.com/send?phone=94776752918","_blank")}
+function leadMessage(){return `හෂාන් සර්, Maths Love Gaming App එකෙන් අලුත් සිසුවෙකුගේ විස්තර.\n\nනම: ${userName}\nWhatsApp: ${userPhone}\nශ්‍රේණිය: ${grade}\nපන්තිය: ${selectedType}\nScore: ${score}\nපාඩම: ${topic}\n\nමට පන්ති සම්බන්ධ විස්තර ලබාදෙන්න.`}
+function sendLeadNow(){userName=document.getElementById("name").value.trim();userPhone=document.getElementById("phone").value.trim();grade=document.getElementById("leadGrade").value;selectedType=document.getElementById("classType").value;if(!userName||!userPhone)return alert("නම සහ WhatsApp අංකය දාන්න.");window.open("https://api.whatsapp.com/send?phone=94776752918&text="+encodeURIComponent(leadMessage()),"_blank")}
+function contactSir(){if(!userName){showLead();return}window.open("https://api.whatsapp.com/send?phone=94776752918&text="+encodeURIComponent(leadMessage()),"_blank")}
+loadLB();
 </script>
-</body>
-</html>
+</body></html>
