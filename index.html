@@ -1,205 +1,2370 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="si">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Maths Love | Hashan Sir</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{box-sizing:border-box}
-:root{--cyan:#00f0ff;--gold:#ffd700;--bg:#03050d;--panel:#0b1120;--green:#2ed573;--red:#ff4757;--purple:#7c4dff;--muted:#9aa8bf}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0%,#18295a 0,#060914 36%,#02030a 100%);color:#fff;font-family:'Noto Serif Sinhala','Segoe UI',sans-serif}
-body:before{content:"";position:fixed;inset:-50%;background:conic-gradient(from 0deg,transparent,rgba(0,240,255,.06),transparent 24%,rgba(124,77,255,.06),transparent 50%);animation:spin 18s linear infinite;pointer-events:none}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-.wrap{max-width:590px;margin:auto;padding:12px;position:relative;z-index:1}
-.card{background:linear-gradient(145deg,rgba(15,23,42,.98),rgba(3,5,13,.98));border:1px solid #00f0ff55;border-radius:26px;padding:16px;box-shadow:0 30px 90px #000b,0 0 40px #00f0ff10}
-.hero{display:flex;gap:13px;align-items:center;padding:15px;border:1px solid #00f0ff55;border-radius:20px;background:linear-gradient(135deg,#00f0ff15,#7c4dff18)}
-.profile{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid var(--cyan);box-shadow:0 0 22px #00f0ff55;background:#111}
-h1{font-size:20px;margin:0;color:var(--gold)}h2{font-size:18px;color:var(--cyan);margin:7px 0}h3{font-size:15px;color:var(--gold);margin:7px 0}
-p,.note,.small{font-size:12px;color:#b8c4d8;line-height:1.6}
-.panel{margin-top:13px;padding:15px;border:1px solid #233555;border-radius:18px;background:#050a14cc}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-button,select,input{font-family:inherit}
-button{border:0;border-radius:13px;padding:12px;font-weight:800;cursor:pointer;min-height:44px}
-button:hover{filter:brightness(1.08);transform:translateY(-1px)}
-.primary{width:100%;margin-top:9px;background:linear-gradient(90deg,var(--cyan),#70f7ff);color:#041016}
-.gold{background:var(--gold);color:#111;width:100%;margin-top:9px}
-.green{background:var(--green);color:#07150c}.red{background:var(--red);color:#fff}
-.purple{background:var(--purple);color:#fff;width:100%;margin-top:9px}
-.wa{background:#25D366;color:#fff;width:100%;margin-top:9px}
-select,input{width:100%;padding:11px;border-radius:11px;border:1px solid #315080;background:#070b16;color:#fff;margin-top:5px}
-label{display:block;font-size:12px;color:#aebbd0;margin-top:10px}
-.hidden{display:none!important}
-.lb{list-style:none;padding:0;margin:0}.lb li{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #1b2840;font-size:12px}
-.lb li:first-child{color:var(--gold);font-weight:800}
-.timer-bg{height:11px;background:#1d2940;border-radius:99px;overflow:hidden;margin:8px 0 16px}.timer{height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--gold),var(--red));transition:width .08s linear}
-.eq{min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;white-space:pre-line;font-size:17px;font-weight:800;line-height:1.75}
-.score{display:flex;justify-content:space-between;font-size:12px;color:#dbe4f2}
-.tcard{padding:12px;border:1px solid #00f0ff33;border-radius:14px;background:#070d19;margin:8px 0}
-.tcard b{color:var(--cyan)}.tcard h3{border-bottom:1px solid #26364f;padding-bottom:6px}
-.q{padding:11px;border:1px solid #26364f;border-radius:12px;background:#0b1322;margin:7px 0;cursor:pointer;font-size:12px}
-.q .ans{display:none;color:#65ffad;margin-top:6px;font-weight:800}.q.show .ans{display:block}
-.feedback{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:99;font-size:35px;font-weight:900;opacity:0}
-.feedback.show{animation:pop .65s ease}.good{color:#63ffad;text-shadow:0 0 25px #2ed573}.bad{color:#ff7180;text-shadow:0 0 25px #ff4757}
-.badge{display:inline-block;padding:6px 14px;border-radius:99px;background:#00f0ff;color:#031017;font-weight:900}
-@media(max-width:420px){.grid{grid-template-columns:1fr}.hero{align-items:flex-start}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths Love - Hashan Sir</title>
+    <!-- Google Sinhala Font: Noto Serif Sinhala -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    /*
+      ✏️ QUICK EDIT GUIDE
+      1) Time: APP_CONFIG.QUESTION_TIME_SECONDS = 10
+      2) Questions: edit examQuestions -> "6"..."11".
+         Each question format:
+         { lesson:"පාඩම", q:"ප්‍රශ්නය", a:නිවැරදි_පිළිතුර }
+      3) Timetable: search for "timetable-screen" in this file.
+      4) Student details / WhatsApp: search for "user-phone" or "contactSir".
+      5) Your photo: replace sir.jpg in the GitHub repository.
+      6) Daily leaderboard: APP_CONFIG.DAILY_LEADERBOARD = true.
+    */
+
+
+function goHome(){
+    const sections = [
+        'home','game','result','leaderboard','aiTutor','notes','questionBank',
+        'student','profile','timetable','settings','about'
+    ];
+    sections.forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
+
+    // Support the app's existing screen system if present.
+    document.querySelectorAll('.screen,.page,.section').forEach(el=>{
+        if(el.id !== 'home') el.classList.add('hidden');
+    });
+
+    const home = document.getElementById('home');
+    if(home){
+        home.classList.remove('hidden');
+        home.style.display='';
+    }
+
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+    <style>
+        * { box-sizing: border-box; font-family: 'Noto Serif Sinhala', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #090d16, #151d2f); color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        .game-card { background: #151d2f; border: 2px solid #00f0ff; border-radius: 20px; padding: 25px; width: 100%; max-width: 480px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.6); position: relative; }
+        .brand-header { background: rgba(0, 240, 255, 0.08); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px dashed #00f0ff; display: flex; flex-direction: column; align-items: center; }
+        .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #00f0ff; object-fit: cover; margin-bottom: 8px; }
+        .brand-header h2 { margin: 0; color: #ffd700; font-size: 22px; }
+        .brand-header p { margin: 4px 0 0 0; color: #cbd5e1; font-size: 13px; }
+        h1, h2 { margin: 10px 0; color: #00f0ff; font-size: 20px; }
+        
+        .leaderboard-box { background: #090d16; border: 1px solid #ffd700; border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left; }
+        .leaderboard-box h3 { color: #ffd700; margin: 0 0 10px 0; font-size: 16px; text-align: center; border-bottom: 1px solid #22304a; padding-bottom: 5px; }
+        .leaderboard-list { list-style: none; padding: 0; margin: 0; }
+        .leaderboard-item { display: flex; justify-content: space-between; padding: 6px 10px; font-size: 13px; border-bottom: 1px solid #151d2f; }
+        .leaderboard-item:nth-child(1) { color: #ffd700; font-weight: bold; font-size: 14px; }
+        .leaderboard-item:nth-child(2) { color: #e2e8f0; font-weight: bold; }
+        .leaderboard-item:nth-child(3) { color: #cbd5e1; font-weight: bold; }
+
+        .form-group { margin: 12px 0; text-align: left; }
+        .form-group label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 4px; }
+        input, select { padding: 10px; border-radius: 8px; border: 1px solid #00f0ff; background: #090d16; color: white; font-size: 14px; width: 100%; }
+        
+        .score-board { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-bottom: 15px; color: #94a3b8; }
+        .timer-bar-bg { background: #22304a; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
+        .timer-bar { background: #ff4757; height: 100%; width: 100%; transition: width 0.1s linear; }
+        .equation { font-size: 18px; font-weight: bold; margin: 15px 0 25px 0; color: #ffd700; line-height: 1.5; white-space: pre-line; }
+        
+        .btn-container { display: flex; gap: 15px; }
+        button { flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; }
+        .btn-correct { background: #2ed573; color: white; }
+        .btn-wrong { background: #ff4757; color: white; }
+        .btn-start { background: #00f0ff; color: #090d16; width: 100%; font-size: 17px; margin-top: 10px; }
+        .btn-share { background: #25D366; color: white; width: 100%; margin-top: 10px; font-size: 15px; }
+        .btn-class { background: #ffd700; color: #090d16; width: 100%; margin-top: 10px; font-size: 15px; font-weight: bold; }
+        .btn-time { background: #5352ed; color: white; width: 100%; margin-top: 10px; font-size: 14px; }
+        .btn-lesson { background: #ff9f43; color: white; width: 100%; margin-top: 10px; font-size: 14px; }
+        
+        .badge { display: inline-block; padding: 6px 15px; background: #00f0ff; color: #090d16; border-radius: 20px; font-weight: bold; margin-top: 10px; font-size: 14px; }
+        
+        /* Timetable & Lesson Card Styling */
+        .timetable-card, .lesson-card { background: #090d16; border: 1px solid #00f0ff; border-radius: 12px; padding: 15px; text-align: left; margin-top: 15px; font-size: 13px; color: #cbd5e1; max-height: 350px; overflow-y: auto; }
+        .timetable-card h3, .lesson-card h3 { color: #ffd700; margin-top: 0; font-size: 15px; text-align: center; border-bottom: 1px solid #22304a; padding-bottom: 6px; }
+        .timetable-card ul, .lesson-card ul { padding-left: 20px; margin: 5px 0 15px 0; }
+        .timetable-note { text-align: center; background: rgba(255, 215, 0, 0.08); border: 1px dashed #ffd700; padding: 8px; border-radius: 8px; color: #ffd700; font-size: 12px; margin-top: 10px; }
+        
+        .lesson-item { background: #151d2f; border: 1px solid #22304a; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+        .lesson-item b { color: #00f0ff; }
+        .lesson-ans { color: #2ed573; margin-top: 4px; display: block; }
+        
+
+        .footer-promo { margin-top: 15px; padding-top: 12px; border-top: 1px solid #22304a; font-size: 12px; color: #94a3b8; }
+        .hidden { display: none; }
+    
+        /* =========================
+           🎮 GAMING UI — EASY TO EDIT
+           ========================= */
+        :root {
+            --neon-cyan:#00f0ff;
+            --neon-pink:#ff3cac;
+            --neon-yellow:#ffd700;
+            --panel:#10172a;
+        }
+        body{
+            background:
+              radial-gradient(circle at 15% 15%, rgba(0,240,255,.12), transparent 28%),
+              radial-gradient(circle at 85% 80%, rgba(255,60,172,.12), transparent 30%),
+              linear-gradient(135deg,#050816,#111a33 55%,#080b18);
+            overflow-x:hidden;
+        }
+        .game-card{
+            background:linear-gradient(180deg,rgba(18,27,52,.97),rgba(8,13,28,.98));
+            border:2px solid var(--neon-cyan);
+            box-shadow:0 0 25px rgba(0,240,255,.18),0 20px 55px rgba(0,0,0,.65);
+            overflow:hidden;
+        }
+        .game-card:before,.game-card:after{
+            content:"✦";
+            position:absolute;
+            color:var(--neon-yellow);
+            opacity:.65;
+            animation:starFloat 3s ease-in-out infinite;
+            pointer-events:none;
+        }
+        .game-card:before{left:10px;top:160px;font-size:20px}
+        .game-card:after{right:10px;top:300px;font-size:14px;animation-delay:1.2s}
+        @keyframes starFloat{50%{transform:translateY(-12px) rotate(20deg);opacity:1}}
+        .game-mascots{
+            display:flex;justify-content:space-between;align-items:center;
+            pointer-events:none;min-height:48px;
+        }
+        .game-mascots.mini{margin:-8px 4px 2px}
+        .mascot{
+            font-size:42px;
+            filter:drop-shadow(0 8px 8px rgba(0,0,0,.4));
+            animation:mascotBounce 1.8s ease-in-out infinite;
+        }
+        .mascot-right{animation-delay:.45s}
+        @keyframes mascotBounce{
+            0%,100%{transform:translateY(0) rotate(-4deg)}
+            50%{transform:translateY(-12px) rotate(4deg)}
+        }
+        .game-top{display:grid;grid-template-columns:1fr .7fr 1fr;gap:7px;margin-bottom:12px}
+        .score-pill,.question-pill,.grade-pill{
+            padding:8px 6px;border-radius:12px;font-size:12px;
+            border:1px solid #26365c;background:#0b1225;
+        }
+        .score-pill{color:#ffd700}.question-pill{color:#00f0ff}.grade-pill{color:#ff8bd8}
+        .timer-wrap{margin-bottom:10px}
+        .timer-label{text-align:right;color:#fff;font-size:12px;font-weight:800;margin-bottom:4px}
+        .timer-bar-bg{height:14px;border:1px solid #26365c;background:#070b18;margin-bottom:12px}
+        .timer-bar{background:linear-gradient(90deg,#2ed573,#ffd700,#ff4757);box-shadow:0 0 12px rgba(255,71,87,.45)}
+        .question-card{
+            position:relative;background:linear-gradient(145deg,#17223e,#0c1327);
+            border:1px solid rgba(0,240,255,.55);border-radius:18px;padding:18px 13px;
+            box-shadow:inset 0 0 25px rgba(0,240,255,.05),0 10px 30px rgba(0,0,0,.25);
+        }
+        .question-topic{color:#ff8bd8;font-size:12px;font-weight:800;margin-bottom:8px}
+        .question-card .equation{margin:0;color:#fff;font-size:19px;min-height:82px;display:flex;align-items:center;justify-content:center}
+        .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
+        .answer-btn{
+            min-height:58px;padding:10px;border-radius:14px;border:1px solid #30446e;
+            color:#fff;background:linear-gradient(145deg,#1a2949,#0d1528);
+            box-shadow:0 5px 0 #070b16;transition:.15s;cursor:pointer;font-weight:800;
+        }
+        .answer-btn:hover{transform:translateY(-2px);border-color:var(--neon-cyan);box-shadow:0 7px 0 #070b16,0 0 14px rgba(0,240,255,.18)}
+        .answer-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #070b16}
+        .answer-btn:disabled{opacity:.55;cursor:not-allowed}
+        .answer-message{min-height:25px;margin-top:10px;font-weight:800;font-size:13px}
+        .answer-message.good{color:#2ed573}.answer-message.bad{color:#ff4757}
+        .game-over-flash{animation:shake .35s linear}
+        @keyframes shake{
+            0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}
+            75%{transform:translateX(8px)}
+        }
+        .btn-correct,.btn-wrong,.btn-start,.btn-share,.btn-class,.btn-time,.btn-lesson{
+            transition:transform .15s,filter .15s,box-shadow .15s;
+        }
+        button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+        @media(max-width:380px){
+            .answer-grid{grid-template-columns:1fr}
+            .mascot{font-size:34px}
+        }
+
+    
+        /* ===== AI TUTOR ===== */
+        .ai-hero{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#111a3b,#24113a);border:1px solid #7c5cff;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 0 22px rgba(124,92,255,.2)}
+        .ai-orb{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:radial-gradient(circle,#7c5cff,#171b39);animation:orbPulse 1.8s infinite}
+        @keyframes orbPulse{50%{transform:scale(1.08);box-shadow:0 0 22px rgba(124,92,255,.55)}}
+        .ai-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+        .ai-chips button{border:1px solid #3a4a78;background:#101a33;color:#dbe8ff;border-radius:12px;padding:10px;cursor:pointer;touch-action:manipulation}
+        .ai-ask{margin-top:10px}
+        .ai-status{min-height:22px;color:#ffd166;font-size:12px;margin-top:8px}
+        .ai-answer{white-space:pre-wrap;background:#070b18;border:1px solid #2a3b67;border-radius:14px;padding:14px;margin-top:8px;line-height:1.6;color:#f2f6ff;min-height:100px;text-align:left}
+        .notes-box{margin-top:16px;background:#090d16;border:1px solid #00f0ff;border-radius:14px;padding:12px;text-align:left}
+        .notes-box h3{text-align:center;color:#ffd700;margin:0 0 8px}
+        .notes-item{background:#111a2e;border:1px solid #25385f;border-radius:12px;padding:11px;margin:8px 0}
+        .notes-item h4{margin:0 0 6px;color:#00f0ff}.notes-item p{margin:0;color:#d6def0;line-height:1.55;font-size:13px}
+        /* Touch reliability */
+        button,.answer-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;z-index:5;pointer-events:auto}
+        #answer-options{position:relative;z-index:20}
+        #answer-options .answer-btn{user-select:none;-webkit-user-select:none}
+
+    
+.global-home{
+    position:fixed;
+    top:12px;
+    left:12px;
+    z-index:9999;
+    border:1px solid rgba(0,240,255,.65);
+    border-radius:14px;
+    padding:10px 14px;
+    background:rgba(5,12,28,.92);
+    color:#fff;
+    font-weight:900;
+    box-shadow:0 0 18px rgba(0,240,255,.25);
+    cursor:pointer;
+    touch-action:manipulation;
+}
+.global-home:active{transform:scale(.96)}
+@media(max-width:520px){
+    .global-home{top:8px;left:8px;padding:8px 11px;font-size:12px}
+}
 </style>
 </head>
 <body>
-<div id="feedback" class="feedback"></div>
-<div class="wrap"><main class="card">
+<button id="globalHomeBtn" class="global-home" onclick="goHome()" aria-label="මුල් පිටුවට යන්න">🏠 HOME</button>
 
-<div class="hero">
-  <img src="sir.jpg" class="profile" alt="Hashan Sir" onerror="this.src='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;120&quot; height=&quot;120&quot;><rect width=&quot;100%&quot; height=&quot;100%&quot; fill=&quot;#101827&quot;/><text x=&quot;50%&quot; y=&quot;54%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; fill=&quot;#00f0ff&quot; font-size=&quot;42&quot;>HB</text></svg>')">
-  <div><h1>⚡ MATHS LOVE | GAMING MATHS</h1>
-  <p><b>හෂාන් බණ්ඩාර (Hashan Sir)</b><br>
-  📍 මිනුවන්ගොඩ WAYGA | ජා-ඇල & උදම්මිට SIP COLLEGE | 🌐 ONLINE</p></div>
-</div>
 
-<div class="panel"><h3>🏆 DAILY TOP 5 — <span id="date"></span></h3><ul id="lb" class="lb"><li>Leaderboard එක Load වෙනවා...</li></ul></div>
+<div class="game-card">
+    <div class="brand-header">
+        <img src="sir.jpg" alt="Hashan Sir" class="profile-img">
+        <h2>Maths Love | ගණිතය</h2>
+        <p><b>හෂාන් බණ්ඩාර (Hashan Sir)</b><br>📍 මිනුවන්ගොඩ WAYGA | ජා-ඇල & උදම්මිට SIP COLLEGE | ONLINE</p>
+    </div>
 
-<section id="home" class="panel">
-<h2>🎮 Maths Challenge</h2>
-<p>ශ්‍රේණිය + පාඩම තෝරලා timed challenge එකක් කරන්න.</p>
-<label>ශ්‍රේණිය</label><select id="grade"></select>
-<label>පාඩම</label><select id="topic"></select>
-<div class="grid" style="margin-top:9px">
-<button class="gold" onclick="showTimetable()">📅 කාලසටහන</button>
-<button class="purple" onclick="showLead()">👤 පන්ති විස්තර</button>
-</div>
-<button class="primary" onclick="goInfo()">🚀 CHALLENGE START</button>
-</section>
+    <!-- LIVE LEADERBOARD -->
+    <div class="leaderboard-box">
+        <h3>🏆 Top Leaderboard (ඉහළම ලකුණු)</h3>
+        <ul id="leaderboard-list" class="leaderboard-list">
+            <li class="leaderboard-item"><span>Leaderboard එක Load වෙනවා...</span></li>
+        </ul>
+        <button class="btn-time" onclick="loadLeaderboard()" style="margin-top:8px;padding:7px;font-size:12px;">🔄 Leaderboard Refresh</button>
+    </div>
 
-<section id="lead" class="panel hidden">
-<h2>👤 අලුත් සිසුවෙක්ද?</h2>
-<p>ඔයාගේ නම, WhatsApp අංකය සහ වසර දාලා Game එක ආරම්භ කරන්න. Game එක අවසානයේ ඒ විස්තර Hashan Sirගේ WhatsApp එකට සෘජුවම යවන්න පුළුවන්.</p>
-<label>නම / Nickname</label><input id="name" placeholder="ඔයාගේ නම" required>
-<label>WhatsApp අංකය</label><input id="phone" inputmode="tel" placeholder="07XXXXXXXX" required>
-<label>ශ්‍රේණිය</label><select id="leadGrade"></select>
-<label>සම්බන්ධ වන පන්තිය</label>
-<select id="classType">
-<option value="Minuwangoda WAYGA">මිනුවන්ගොඩ - WAYGA</option>
-<option value="Ja-Ela SIP College">ජා-ඇල - SIP College</option>
-<option value="Udammita SIP College">උදම්මිට - SIP College</option>
-<option value="Online Class">Online Class</option>
-</select>
-<button class="primary" onclick="saveLeadAndPlay()">🎮 GAME එකට යන්න</button>
-<button class="wa" onclick="sendLeadNow()">📲 දැන්ම Sirට විස්තර යවන්න</button>
-<button class="gold" onclick="home()">🔙 ආපසු</button>
-</section>
+    <!-- STEP 1: BASIC WARM-UP TEST -->
+    <div id="basic-screen">
+        <h1>⚡ Basic Level Test</h1>
+        <p style="color: #cbd5e1; font-size: 13px;">මූලික ගණන් 3ට ඉක්මනින් උත්තර දෙන්න!</p>
+        <div class="score-board">
+            <span>Question: <span id="basic-step">1</span>/3</span>
+        </div>
+        <div id="basic-equation" class="equation">...</div>
+        <div class="btn-container">
+            <button class="btn-correct" onclick="checkBasicAnswer(true)">TRUE ✔</button>
+            <button class="btn-wrong" onclick="checkBasicAnswer(false)">FALSE ✖</button>
+        </div>
+        <button class="btn-lesson" onclick="showAIScreen()">🤖 AI ගණිත ගුරු — ගැටලුවක් අහන්න</button>
+        <button class="btn-time" onclick="showTimetable()">📅 පන්ති කාලසටහන බලන්න</button>
+    </div>
 
-<section id="info" class="panel hidden">
-<h2>🎮 Player Profile</h2>
-<p>Leaderboard එකේ පෙන්වන්න නමක් දාන්න.</p>
-<label>Leaderboard නම</label><input id="gameName" placeholder="නම / Nickname">
-<button class="primary" onclick="startGame()">PLAY NOW 🔥</button>
-<button class="gold" onclick="showLead()">👤 මගේ විස්තර</button>
-</section>
+    <!-- STEP 2: STUDENT DETAILS FORM -->
+    <div id="info-screen" class="hidden">
+        <h1>🎉 නියමයි!</h1>
+        <p style="color: #cbd5e1; font-size: 13px;">Leaderboard එකට එකතු වෙන්න විස්තර දෙන්න:</p>
+        
+        <form name="student-leads" method="POST" data-netlify="true" id="lead-form" onsubmit="event.preventDefault(); submitInfo();">
+            <input type="hidden" name="form-name" value="student-leads" />
+            
+            <div class="form-group">
+                <label>ඔයාගේ නම / අන්වර්ථ නම (Leaderboard එකට):</label>
+                <input type="text" id="user-name" name="student_name" placeholder="Name" required>
+            </div>
 
-<section id="game" class="panel hidden">
-<div class="score"><span>🏆 Score: <b id="score">0</b></span><span>🔥 Combo: <b id="combo">0</b></span><span>Q <b id="qn">1</b>/10</span></div>
-<div class="timer-bg"><div id="timer" class="timer"></div></div>
-<div id="eq" class="eq"></div>
-<div class="grid"><button class="green" onclick="answer(true)">TRUE ✔</button><button class="red" onclick="answer(false)">FALSE ✖</button></div>
-<p class="note">⏱️ ප්‍රශ්නයට නියමිත කාලය ඉවර වුණොත් automatic next question යනවා.</p>
-</section>
+            <div class="form-group">
+                <label>WhatsApp අංකය:</label>
+                <input type="tel" name="phone" id="user-phone" placeholder="07XXXXXXXX" required>
+            </div>
 
-<section id="result" class="panel hidden" style="text-align:center">
-<h2>🏆 CHALLENGE COMPLETE!</h2><p>Score: <b id="final">0</b></p><div id="rank" class="badge"></div>
-<button class="primary" onclick="again()">🔄 PLAY AGAIN</button>
-<button class="wa" onclick="contactSir()">📲 පන්ති සඳහා Sirට විස්තර යවන්න</button>
-<button class="gold" onclick="showTimetable()">📅 කාලසටහන බලන්න</button>
-<button class="purple" onclick="showBank()">📖 මේ පාඩමේ ප්‍රශ්න 50</button>
-<button class="primary" onclick="home()">🏠 HOME</button>
-</section>
+            <div class="form-group">
+                <label>ශ්‍රේණිය (Grade):</label>
+                <select name="grade" id="user-grade">
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11 (O/L)</option>
+                </select>
+            </div>
 
-<section id="timetable" class="panel hidden">
-<h2>📅 පන්ති කාලසටහන</h2>
-<div class="tcard"><h3>📍 මිනුවන්ගොඩ WAYGA</h3>
-<ul>
-<li><b>9 වසර:</b> ඉරිදා ප.ව. 1:45 - 3:45</li>
-<li><b>10 වසර:</b> ඉරිදා ප.ව. 4:00 - 6:00</li>
-<li><b>10/11 Paper Class:</b> බ්‍රහස්පතින්දා ප.ව. 6:00 - 8:30</li>
-</ul></div>
-<div class="tcard"><h3>📍 ජා-ඇල SIP COLLEGE</h3>
-<ul>
-<li><b>7 වසර:</b> සිකුරාදා ප.ව. 4:00 - 6:00</li>
-<li><b>8 වසර:</b> සෙනසුරාදා ප.ව. 5:30 - 7:30</li>
-<li><b>11 වසර:</b> ඉරිදා පෙ.ව. 8:30 - 12:00</li>
-</ul></div>
-<div class="tcard"><h3>📍 උදම්මිට SIP COLLEGE</h3>
-<ul><li><b>පන්ති වේලාවන් දැනගැනීමට අදම WhatsApp පණිවිඩයක් එවන්න.</b></li></ul></div>
-<div class="tcard"><h3>🌐 ONLINE CLASSES</h3>
-<ul>
-<li><b>11 වසර:</b> ඉරිදා රාත්‍රී 9:00 - 11:00</li>
-<li><b>10 වසර:</b> සිකුරාදා රාත්‍රී 9:00 - 11:00</li>
-<li><b>9 වසර:</b> සඳුදා රාත්‍රී 9:00 - 11:00</li>
-</ul></div>
-<p style="text-align:center;color:#ffd700">📲 කාලසටහන් සහ විස්තර: <b>077 6752918</b></p>
-<button class="wa" onclick="openWhatsApp()">📲 WhatsApp</button>
-<button class="primary" onclick="home()">🔙 HOME</button>
-</section>
+            <div class="form-group">
+                <label>සම්බන්ධ වන පන්තිය:</label>
+                <select name="type" id="user-type">
+                    <option value="Minuwangoda WAYGA">මිනුවන්ගොඩ - WAYGA</option>
+                    <option value="Ja-Ela SIP College">ජා-ඇල - SIP College</option>
+                    <option value="Udammita SIP College">උදම්මිට - SIP College</option>
+                    <option value="Online Class">Online Class</option>
+                </select>
+            </div>
 
-<section id="bank" class="panel hidden"><h2>📚 ප්‍රශ්න 50</h2><div id="bankList"></div>
-<button class="primary" onclick="home()">🔙 HOME</button></section>
+            <input type="hidden" name="score" id="final-score-field" value="0" />
+            <button type="submit" class="btn-start">Main Game එක Start කරන්න 🚀</button>
+        </form>
+    </div>
 
-<p class="small" style="text-align:center;margin:14px 0 0">📞 WhatsApp: <b>077 6752918</b> | හෂාන් බණ්ඩාර (Hashan Sir)</p>
-</main></div>
+    <!-- STEP 3: MAIN GAME PLAY SCREEN -->
+    <div id="play-screen" class="hidden">
+        <div class="game-top">
+            <div class="score-pill">⭐ Score <b id="score">0</b></div>
+            <div class="question-pill">❓ <b id="question-number">1</b></div>
+            <div class="grade-pill">📘 Grade <b id="display-grade">6</b></div>
+        </div>
 
-<script>
-const SUPABASE_URL="https://olbtmrccdghenxtzslgx.supabase.co";
-const SUPABASE_ANON_KEY="sb_publishable_rsPQaFPm5F5RGmTqht7e7g_x6_KkiYa";
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const DATA={"6":[{"lesson":"වුර්ත","q":"වෘත්තයක මධ්‍ය ලක්ෂ්‍යයේ සිට වෘත්තයේ ලක්ෂ්‍යයකට ඇති දුර අරය ලෙස හැඳින්වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"විෂ්කම්භය අරයේ දෙගුණයකි.","a":"ඔව්"},{"lesson":"වුර්ත","q":"විෂ්කම්භය 18 cm නම් අරය 9 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"අරය 7 cm නම් විෂ්කම්භය 21 cm වේ.","a":"නැත"},{"lesson":"වුර්ත","q":"විෂ්කම්භය 20 cm නම් අරය 10 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"වෘත්තයක සියලු අර සමාන දිගින් යුක්ත වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"මධ්‍ය ලක්ෂ්‍යය වෘත්තය මත පිහිටයි.","a":"නැත"},{"lesson":"වුර්ත","q":"අරය 5 cm නම් විෂ්කම්භය 10 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"විෂ්කම්භය 16 cm නම් අරය 8 cm වේ.","a":"ඔව්"},{"lesson":"වුර්ත","q":"අරය විෂ්කම්භයට වඩා දෙගුණයකි.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"5,432 හි 5 හි ස්ථානීය අගය 5,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"7,086 හි 8 හි ස්ථානීය අගය 800 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"34,521 හි 4 හි ස්ථානීය අගය 4,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"90,007 හි 9 හි ස්ථානීය අගය 90,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"6,305 හි 3 හි ස්ථානීය අගය 30 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"48,219 හි 2 හි ස්ථානීය අගය 200 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"70,405 හි 4 හි ස්ථානීය අගය 400 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"12,345 හි 1 හි ස්ථානීය අගය 1,000 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"56,789 හි 8 හි ස්ථානීය අගය 80 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"4,321 හි 3 හි ස්ථානීය අගය 300 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"8,765 හි 7 හි ස්ථානීය අගය 700 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"25,104 හි 5 හි ස්ථානීය අගය 5,000 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"61,230 හි 6 හි ස්ථානීය අගය 6,000 වේ.","a":"නැත"},{"lesson":"ස්තානීය අගය","q":"3,908 හි 9 හි ස්ථානීය අගය 900 වේ.","a":"ඔව්"},{"lesson":"ස්තානීය අගය","q":"42,006 හි 2 හි ස්ථානීය අගය 2,000 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"125 + 378 = 503 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"900 - 456 = 444 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"24 × 6 = 124 වේ.","a":"නැත"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"360 ÷ 9 = 40 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"45 + 27 - 12 = 60 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"8 × 7 + 6 = 62 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"100 - 8 × 5 = 60 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"72 ÷ 8 + 9 = 18 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"15 × 4 - 20 = 50 වේ.","a":"නැත"},{"lesson":"পূর্ণ සංඛ්‍යා මත ගණිත කර්ම","q":"(18 + 12) ÷ 5 = 6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"7 × (10 - 4) = 42 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"250 + 150 - 75 = 325 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"96 ÷ 12 × 5 = 40 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"30 + 5 × 6 = 60 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(40 - 16) ÷ 4 = 6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"9 × 9 - 20 = 61 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"144 ÷ 12 + 8 = 20 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"35 + 65 ÷ 5 = 48 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(25 + 15) × 2 = 80 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"500 - 125 × 2 = 250 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"64 ÷ 8 + 7 = 15 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"18 + 24 = 42 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"81 ÷ 9 = 9 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"7 × 8 = 54 වේ.","a":"නැත"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"600 - 275 = 325 වේ.","a":"ඔව්"}],"7":[{"lesson":"සමමිතිය","q":"සමමිතියෙන් රූපයක් සමාන කොටස් දෙකකට බෙදන රේඛාව සමමිති අක්ෂයයි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සමචතුරස්‍රයක සමමිති අක්ෂ 4ක් ඇත.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සෘජුකෝණාස්‍රයක සමමිති අක්ෂ 3ක් ඇත.","a":"නැත"},{"lesson":"සමමිතිය","q":"සමපාර්ශ්වික ත්‍රිකෝණයක සමමිති අක්ෂ 3ක් ඇත.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සමද්විපාද ත්‍රිකෝණයක සමමිති අක්ෂ 1ක් ඇත.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"වෘත්තයක සමමිති අක්ෂ අසීමිත ගණනකි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සමචතුරස්‍රයක භ්‍රමණ සමමිතියේ අනුපිළිවෙළ 4කි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"සෘජුකෝණාස්‍රයක භ්‍රමණ සමමිතියේ අනුපිළිවෙළ 3කි.","a":"නැත"},{"lesson":"සමමිතිය","q":"සමපාර්ශ්වික ත්‍රිකෝණයක භ්‍රමණ සමමිතියේ අනුපිළිවෙළ 3කි.","a":"ඔව්"},{"lesson":"සමමිතිය","q":"පරාවර්තනයේදී අක්ෂයට ඇති දුර වෙනස් නොවේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={1,2,3,4} හි සාමාජිකයන් 4කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A={a,e,i,o,u} හි සාමාජිකයන් 4කි.","a":"නැත"},{"lesson":"කුලක","q":"හිස් කුලකයක සාමාජිකයන් ගණන 0කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A={2,4,6}, B={4,6,8} නම් A∩B={4,6} වේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={1,2,3}, B={3,4,5} නම් A∪B={1,2,3,4,5} වේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={1,2,3,4} නම් 3∈A වේ.","a":"ඔව්"},{"lesson":"කුලක","q":"A={5,7,9} නම් 6∈A වේ.","a":"නැත"},{"lesson":"කුලක","q":"A={1,2,3} හි උපකුලක ගණන 8කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A={a,b} හි උපකුලක ගණන 4කි.","a":"ඔව්"},{"lesson":"කුලක","q":"A∩∅ = ∅ වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-8)+13=5 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-12)-5=-17 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-6)×(-7)=42 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-48)÷6=-8 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"15+(-9)=6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-20)+(-15)=35 වේ.","a":"නැත"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-9)×4=-36 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"56÷(-7)=-8 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-5)+8-3=0 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"12-(-7)=19 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-4)×(-5)+3=23 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"30+(-12)÷3=26 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-18)÷3-4=-10 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"7-(-8)+2=17 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-3)×6+5=-13 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-40)+25=-15 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"64÷(-8)+10=2 වේ.","a":"ඔව්"},{"lesson":"পূර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-7)×(-3)-5=16 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"18-25+4=-3 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-2)×(-9)÷3=6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-15)+7=-8 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-24)÷(-6)=4 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"9-(-4)=13 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-5)×7=-35 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"36÷(-4)=-9 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-10)+(-6)=-16 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"20-(-5)=15 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-3)×(-8)=24 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"42÷7=6 වේ.","a":"ඔව්"},{"lesson":"පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","q":"(-6)+(-4)=-10 වේ.","a":"ඔව්"}],"8":[{"lesson":"සංඛ්‍යා රටා","q":"2,5,8,11,... හි ඊළඟ පදය 14 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"4,8,12,16,... හි ඊළඟ පදය 20 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"3,6,12,24,... හි ඊළඟ පදය 48 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"20,17,14,11,... හි ඊළඟ පදය 8 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"1,4,9,16,... හි ඊළඟ පදය 25 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"5,10,15,20,... හි 6 වන පදය 30 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"2,4,8,16,... හි 6 වන පදය 64 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"30,25,20,15,... හි ඊළඟ පදය 10 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"7,14,21,28,... හි ඊළඟ පදය 35 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"100,90,80,70,... හි ඊළඟ පදය 60 වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"පැත්ත 6 cm වූ සමචතුරස්‍රයක පරිමිතිය 24 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 10 cm හා පළල 5 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 30 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමපාර්ශ්වික ත්‍රිකෝණයක පැත්ත 8 cm නම් පරිමිතිය 24 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 12 m හා පළල 7 m වූ සෘජුකෝණාස්‍රයක පරිමිතිය 38 m වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පරිමිතිය 36 cm නම් පැත්ත 9 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සෘජුකෝණාස්‍රයක පරිමිතිය 50 cm හා දිග 15 cm නම් පළල 10 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"ත්‍රිකෝණයක පැති 5,7,9 cm නම් පරිමිතිය 21 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"පැති 4 cm බැගින් වූ නිත්‍ය පංචභුජයක පරිමිතිය 20 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පැත්ත 12 m නම් පරිමිතිය 48 m වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 8 cm, පළල 3 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 22 cm වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සෘජු කෝණයක විශාලත්වය 90° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සරල කෝණයක විශාලත්වය 180° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"පූර්ණ කෝණයක විශාලත්වය 360° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"45° කෝණයක් තියුණු කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"120° කෝණයක් තියුණු කෝණයකි.","a":"නැත"},{"lesson":"කෝණ","q":"90° ට අඩු කෝණයක් තියුණු කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"90°-180° අතර කෝණයක් මන්ද කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"සිරස්විරුද්ධ කෝණ දෙකක් එකක් 70° නම් අනෙක 70° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සරල රේඛාවක එක් කෝණයක් 65° නම් අනෙක් කෝණය 115° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"ත්‍රිකෝණයක කෝණ දෙක 50° හා 60° නම් තුන්වන කෝණය 70° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සෘජුකෝණාස්‍රයක එක් කෝණයක් 90° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සමපාර්ශ්වික ත්‍රිකෝණයක එක් කෝණයක් 60° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"45° සහ 35° එකතුව 80° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"140° කෝණයක සම්පූරක කෝණය 40° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"25° කෝණයක සම්පූරක කෝණය 65° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"110° සහ 70° එකතුව 180° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"ත්‍රිකෝණයක අභ්‍යන්තර කෝණ එකතුව 180° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"සෘජු කෝණ දෙකක එකතුව 180° වේ.","a":"නැත"},{"lesson":"කෝණ","q":"පූර්ණ කෝණයකින් 90° අඩු කළ විට 270° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"80° කෝණයක සම්පූරක කෝණය 10° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"30° කෝණයක් මන්ද කෝණයකි.","a":"නැත"},{"lesson":"කෝණ","q":"90° කෝණයක් තියුණු කෝණයකි.","a":"නැත"},{"lesson":"කෝණ","q":"180° කෝණයක් සරල කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"360° කෝණයක් පූර්ණ කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"100° කෝණයක් මන්ද කෝණයකි.","a":"ඔව්"},{"lesson":"කෝණ","q":"20° සහ 70° එකතුව 100° වේ.","a":"නැත"},{"lesson":"කෝණ","q":"150° කෝණයක සම්පූරක කෝණය 30° වේ.","a":"ඔව්"},{"lesson":"කෝණ","q":"35° කෝණයක සම්පූරක කෝණය 55° වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"පැත්ත 11 cm වූ සමචතුරස්‍රයක පරිමිතිය 44 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 16 cm හා පළල 4 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 40 cm වේ.","a":"ඔව්"}],"9":[{"lesson":"සංඛ්‍යා රටා","q":"5,9,13,17,... හි ඊළඟ පදය 21 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"2,6,18,54,... හි ඊළඟ පදය 162 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"50,45,40,35,... හි ඊළඟ පදය 30 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"1,3,5,7,... හි 10 වන පදය 19 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"4,9,14,19,... හි 8 වන පදය 39 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"3,6,9,12,... හි n වන පදය 3n වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"7,12,17,22,... හි ඊළඟ පදය 27 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"100,80,60,40,... හි ඊළඟ පදය 20 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"2,5,10,17,... හි ඊළඟ පදය 26 වේ.","a":"ඔව්"},{"lesson":"සංඛ්‍යා රටා","q":"1,4,7,10,... හි 12 වන පදය 34 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1011₂ දශමයට 11 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1101₂ දශමයට 13 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"13₁₀ = 1101₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"8₁₀ = 1000₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"10000₂ දශමයට 16 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1111₂ දශමයට 15 වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"5₁₀ = 101₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"101₂ + 10₂ = 111₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"110₂ + 11₂ = 1001₂ වේ.","a":"ඔව්"},{"lesson":"සංක්‍යා පාද","q":"1001₂ - 1₂ = 1000₂ වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/2 + 1/4 = 3/4 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/5 - 1/5 = 2/5 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/3 × 3/4 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 ÷ 1/2 = 3/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 1/2 + 2 1/2 = 4 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 - 1/3 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/5 + 1/10 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/8 - 3/8 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/9 × 3/8 = 1/6 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 ÷ 5/12 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/7 + 2/7 = 5/7 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"11/12 - 5/12 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/3 × 9/10 = 3/5 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/5 ÷ 2/5 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/4 + 2/3 = 11/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/10 - 1/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/8 × 4/9 = 1/6 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/12 + 1/6 = 7/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2 1/4 - 1 1/2 = 3/4 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/5 ÷ 9/10 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/7 + 3/7 = 5/7 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/9 - 2/9 = 1/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 × 8/9 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/8 ÷ 7/16 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/2 + 2/5 = 9/10 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 × 3/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/9 ÷ 2/3 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 2/3 - 2/3 = 1 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/10 + 1/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/5 + 1/10 = 9/10 වේ.","a":"ඔව්"}],"10":[{"lesson":"පරිමිතිය","q":"පැත්ත 9 cm වූ සමචතුරස්‍රයක පරිමිතිය 36 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 14 cm හා පළල 6 cm වූ සෘජුකෝණාස්‍රයක පරිමිතිය 40 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"ත්‍රිකෝණයක පැති 8,11,13 cm නම් පරිමිතිය 32 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පරිමිතිය 52 cm නම් පැත්ත 13 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සෘජුකෝණාස්‍රයක පරිමිතිය 64 cm, දිග 20 cm නම් පළල 12 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"නිත්‍ය ෂඩ්භුජයක එක් පැත්ත 7 cm නම් පරිමිතිය 42 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"දිග 18 m හා පළල 9 m වූ සෘජුකෝණාස්‍රයක පරිමිතිය 54 m වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමද්විපාද ත්‍රිකෝණයක සමාන පැති 10 cm හා පාදය 12 cm නම් පරිමිතිය 32 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සෘජුකෝණාස්‍රයක පරිමිතිය 90 cm හා පළල 15 cm නම් දිග 30 cm වේ.","a":"ඔව්"},{"lesson":"පරිමිතිය","q":"සමචතුරස්‍රයක පරිමිතිය 100 m නම් පැත්ත 25 m වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√144 = 12 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√225 = 15 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√324 = 18 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√400 = 20 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√625 = 25 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√729 = 27 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√900 = 30 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√1024 = 32 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√121 = 11 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√169 = 13 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√196 = 14 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√256 = 16 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√289 = 17 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√361 = 19 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√441 = 21 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√484 = 22 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√529 = 23 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√676 = 26 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√784 = 28 වේ.","a":"ඔව්"},{"lesson":"වර්ගමූලය","q":"√841 = 29 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1/3 + 1/6 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/8 - 1/4 = 3/8 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/5 × 10/9 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/9 ÷ 14/27 = 3/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2 1/3 + 1 1/6 = 3 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/12 + 1/4 = 2/3 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/10 - 3/20 = 11/20 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/7 × 14/9 = 8/9 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 ÷ 3/8 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 3/4 - 2/3 = 13/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/6 + 7/12 = 17/12 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"9/10 - 2/5 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2/3 × 3/5 = 2/5 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"5/8 ÷ 5/16 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/4 + 5/8 = 11/8 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"7/12 - 1/8 = 11/24 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"2 1/2 × 2/5 = 1 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"3/7 ÷ 6/7 = 1/2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"1 1/3 + 2/3 = 2 වේ.","a":"ඔව්"},{"lesson":"භාග","q":"4/5 - 1/10 = 7/10 වේ.","a":"ඔව්"}],"11":[{"lesson":"තාත්වික සංඛ්‍යා","q":"√2 යනු පරිමේය සංඛ්‍යාවකි.","a":"නැත"},{"lesson":"තාත්වික සංඛ්‍යා","q":"1/2 යනු පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"π යනු පරිමේය සංඛ්‍යාවකි.","a":"නැත"},{"lesson":"තාත්වික සංඛ්‍යා","q":"0 යනු පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√9 = 3 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√25 = 5 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√49 = 7 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"2.75 පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√16/√4 = 2 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"3/4 + 1/4 = 1 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√81 = 9 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√100 = 10 වේ.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"-5 යනු පූර්ණ සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"1.234 යනු පරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"තාත්වික සංඛ්‍යා","q":"√3 යනු අපරිමේය සංඛ්‍යාවකි.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"2³ = 8 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"5² = 25 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"10³ = 1000 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"2⁵ = 32 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"3⁴ = 81 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"a² × a³ = a⁵ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"x⁷ ÷ x² = x⁵ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"(a²)³ = a⁶ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"2⁰ = 1 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"10⁻² = 1/100 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₁₀100 = 2 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₁₀1000 = 3 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₂8 = 3 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₃27 = 3 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"log₅25 = 2 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"10² × 10³ = 10⁵ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"3⁵ ÷ 3² = 3³ වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"4³ = 64 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"8² = 64 වේ.","a":"ඔව්"},{"lesson":"දර්ශක හා ලඝු","q":"√(10²) = 10 වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පැත්ත 6 cm වූ සමචතුරස්‍රයක වර්ගඵලය 36 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"දිග 12 cm හා පළල 5 cm වූ සෘජුකෝණාස්‍රයක වර්ගඵලය 60 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 10 cm හා උස 6 cm වූ ත්‍රිකෝණයක වර්ගඵලය 30 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"අරය 7 cm වූ වෘත්තයක වර්ගඵලය, π=22/7 ලෙස, 154 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 8 cm හා උස 5 cm වූ සමාන්තරචතුරස්‍රයක වර්ගඵලය 40 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාද 12 cm හා උස 4 cm වූ ත්‍රිකෝණයක වර්ගඵලය 24 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පැත්ත 15 m වූ සමචතුරස්‍රයක වර්ගඵලය 225 m² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"දිග 20 m හා පළල 8 m වූ සෘජුකෝණාස්‍රයක වර්ගඵලය 160 m² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"අරය 14 cm වූ වෘත්තයක වර්ගඵලය, π=22/7 ලෙස, 616 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 15 cm හා උස 8 cm වූ ත්‍රිකෝණයක වර්ගඵලය 60 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"වර්ගඵලය 72 cm² සහ පළල 8 cm වූ සෘජුකෝණාස්‍රයක දිග 9 cm වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"වර්ගඵලය 121 cm² වූ සමචතුරස්‍රයක පැත්ත 11 cm වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"පාදය 20 cm හා උස 9 cm වූ සමාන්තරචතුරස්‍රයක වර්ගඵලය 180 cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"අරය 3 cm වූ වෘත්තයක වර්ගඵලය 9π cm² වේ.","a":"ඔව්"},{"lesson":"ගණ වස්තු වල වර්ගඵලය","q":"දිග 9 cm හා පළල 7 cm වූ සෘජුකෝණාස්‍රයක වර්ගඵලය 63 cm² වේ.","a":"ඔව්"}]};
-const TOPICS={6:["වුර්ත","ස්තානීය අගය","පූර්ණ සංඛ්‍යා මත ගණිත කර්ම"],7:["සමමිතිය","කුලක","පූර්ණ සංඛ්‍යා මත ගණිත කර්ම"],8:["සංඛ්‍යා රටා","පරිමිතිය","කෝණ"],9:["සංඛ්‍යා රටා","සංක්‍යා පාද","භාග"],10:["පරිමිතිය","වර්ගමූලය","භාග"],11:["තාත්වික සංඛ්‍යා","දර්ශක හා ලඝු","ගණ වස්තු වල වර්ගඵලය"]};
-let grade="6",topic="",qs=[],i=0,score=0,combo=0,correct=false,timer=null,player="",userName="",userPhone="",selectedType="";
-const today=()=>new Date().toLocaleDateString("en-CA");
-document.getElementById("date").textContent=today();
-document.getElementById("grade").innerHTML=Object.keys(TOPICS).map(g=>`<option value="${g}">${g} වසර</option>`).join("");
-document.getElementById("leadGrade").innerHTML=Object.keys(TOPICS).map(g=>`<option value="${g}">Grade ${g}</option>`).join("");
-function fillTopics(){grade=document.getElementById("grade").value;document.getElementById("topic").innerHTML=TOPICS[grade].map(t=>`<option>${t}</option>`).join("")}
-document.getElementById("grade").onchange=fillTopics;fillTopics();
-function hide(){["home","lead","info","game","result","timetable","bank"].forEach(x=>document.getElementById(x).classList.add("hidden"))}
-function home(){hide();document.getElementById("home").classList.remove("hidden")}
-function showTimetable(){hide();document.getElementById("timetable").classList.remove("hidden")}
-function showLead(){hide();document.getElementById("lead").classList.remove("hidden")}
-function goInfo(){grade=document.getElementById("grade").value;topic=document.getElementById("topic").value;hide();document.getElementById("info").classList.remove("hidden")}
-function saveLeadAndPlay(){
- userName=document.getElementById("name").value.trim();userPhone=document.getElementById("phone").value.trim();
- selectedType=document.getElementById("classType").value;grade=document.getElementById("leadGrade").value;
- if(!userName||!userPhone)return alert("නම සහ WhatsApp අංකය දාන්න.");
- document.getElementById("gameName").value=userName;document.getElementById("grade").value=grade;fillTopics();goInfo();
-}
-function startGame(){
- player=document.getElementById("gameName").value.trim()||userName||"Anonymous";
- grade=document.getElementById("grade").value;topic=document.getElementById("topic").value;
- qs=(DATA[grade]||[]).filter(x=>x.lesson===topic).sort(()=>Math.random()-.5).slice(0,10);
- i=0;score=0;combo=0;hide();document.getElementById("game").classList.remove("hidden");next();
-}
-function wrong(a){if(a==="ඔව්")return"නැත";if(a==="නැත")return"ඔව්";let m=a.match(/-?\d+(?:\.\d+)?/);return m?a.replace(m[0],String(Number(m[0])+1)):a+" (වැරදි)"}
-function next(){
- clearInterval(timer);if(i>=qs.length)return finish();let x=qs[i];correct=Math.random()>.5;
- document.getElementById("eq").textContent=x.q+"\n\nපිළිතුර: "+(correct?x.a:wrong(x.a));
- document.getElementById("qn").textContent=i+1;document.getElementById("score").textContent=score;document.getElementById("combo").textContent=combo;
- let seconds=(topic==="භාග"||topic==="දර්ශක හා ලඝු"||topic==="ගණ වස්තු වල වර්ගඵලය")?20:15,total=seconds*1000,left=total;
- timer=setInterval(()=>{left-=50;document.getElementById("timer").style.width=Math.max(0,left/total*100)+"%";if(left<=0){clearInterval(timer);fx(false,"⏰ TIME UP!");setTimeout(()=>{i++;next()},350)}},50)
-}
-function answer(v){clearInterval(timer);if(v===correct){combo++;let p=1+Math.min(combo,4);score+=p;fx(true,"🔥 +"+p)}else{combo=0;fx(false,"❌ WRONG")}setTimeout(()=>{i++;next()},300)}
-function fx(good,text){let f=document.getElementById("feedback");f.textContent=text;f.className="feedback show "+(good?"good":"bad");setTimeout(()=>f.className="feedback",650)}
-async function finish(){
- hide();document.getElementById("result").classList.remove("hidden");document.getElementById("final").textContent=score;
- document.getElementById("rank").textContent=score>=35?"🏆 LEGENDARY MATH MASTER":score>=25?"🥇 MATH CHAMPION":score>=15?"🔥 MATH HERO":"📘 MATH ROOKIE";
- try{await sb.from("leaderboard").insert([{name:player,grade:grade,score:score,topic:topic,game_date:today()}])}catch(e){console.log(e)}loadLB();
-}
-function again(){goInfo()}
-function showBank(){let arr=(DATA[grade]||[]).filter(x=>x.lesson===topic);hide();document.getElementById("bank").classList.remove("hidden");document.getElementById("bankList").innerHTML=arr.map((x,n)=>`<div class="q" onclick="this.classList.toggle('show')"><b>ප්‍රශ්නය ${n+1}</b><br>${x.q}<div class="ans">✔ පිළිතුර: ${x.a}</div></div>`).join("")}
-async function loadLB(){try{let{data,error}=await sb.from("leaderboard").select("*").eq("game_date",today()).order("score",{ascending:false}).limit(5);if(error)throw error;document.getElementById("lb").innerHTML=data?.length?data.map((x,n)=>`<li><span>${["🥇","🥈","🥉","⭐","⭐"][n]} ${x.name||"Anonymous"} — Gr.${x.grade||"-"}</span><b>${x.score} pts</b></li>`).join(""):"<li>අද තවම scores නැහැ 🚀</li>"}catch(e){document.getElementById("lb").innerHTML="<li>Leaderboard එක Load කිරීමට නොහැකි විය.</li>"}}
-function openWhatsApp(){window.open("https://api.whatsapp.com/send?phone=94776752918","_blank")}
-function leadMessage(){return `හෂාන් සර්, Maths Love Gaming App එකෙන් අලුත් සිසුවෙකුගේ විස්තර.\n\nනම: ${userName}\nWhatsApp: ${userPhone}\nශ්‍රේණිය: ${grade}\nපන්තිය: ${selectedType}\nScore: ${score}\nපාඩම: ${topic}\n\nමට පන්ති සම්බන්ධ විස්තර ලබාදෙන්න.`}
-function sendLeadNow(){userName=document.getElementById("name").value.trim();userPhone=document.getElementById("phone").value.trim();grade=document.getElementById("leadGrade").value;selectedType=document.getElementById("classType").value;if(!userName||!userPhone)return alert("නම සහ WhatsApp අංකය දාන්න.");window.open("https://api.whatsapp.com/send?phone=94776752918&text="+encodeURIComponent(leadMessage()),"_blank")}
-function contactSir(){if(!userName){showLead();return}window.open("https://api.whatsapp.com/send?phone=94776752918&text="+encodeURIComponent(leadMessage()),"_blank")}
-loadLB();
+        <div class="timer-wrap">
+            <div class="timer-label">⏱️ <span id="timer-seconds">10</span>s</div>
+            <div class="timer-bar-bg"><div id="timer" class="timer-bar"></div></div>
+        </div>
+
+        <div class="game-mascots mini">
+            <div class="mascot mascot-left">🤖</div>
+            <div class="mascot mascot-right">🦊</div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-topic" id="question-topic">📚 පාඩම</div>
+            <div id="equation" class="equation">...</div>
+        </div>
+
+        <div id="answer-options" class="answer-grid"></div>
+        <div id="answer-message" class="answer-message"></div>
+    </div>
+
+    <!-- STEP 4: GAME OVER SCREEN -->
+    <div id="over-screen" class="hidden">
+        <h2>Game Over! 💥</h2>
+        <p style="font-size: 18px; margin: 5px 0;">ඔයාගේ Score එක: <b id="final-score" style="color: #00f0ff;">0</b></p>
+        <div id="rank-badge" class="badge">ගණිත ශූරයා</div>
+
+        <button class="btn-start" style="margin-top: 15px;" onclick="restartGame()">නැවත Play කරන්න 🔄</button>
+        <button class="btn-share" onclick="shareWhatsApp()">මිතුරන්ට Share කරන්න 📲</button>
+        <button class="btn-class" onclick="contactSir()">පන්ති සදහා සම්බන්ධ වෙන්න 📚</button>
+        <button class="btn-lesson" onclick="showAIScreen()">🤖 AI ගණිත ගුරු</button>
+        <button class="btn-time" onclick="showTimetable()">📅 කාලසටහන බලන්න</button>
+    </div>
+
+    <!-- STEP 5: TIMETABLE DISPLAY SCREEN -->
+    <!-- AI MATH TUTOR -->
+    <div id="ai-screen" class="hidden">
+        <div class="ai-hero">
+            <div class="ai-orb">🤖</div>
+            <div><h2 style="margin:0;color:#fff">AI ගණිත ගුරු</h2><p style="margin:4px 0;color:#a7b4d6">ගැටලුවක් අහන්න • සූත්‍ර අහන්න • පියවරෙන් පියවර විසඳුමක් ගන්න</p></div>
+        </div>
+        <div class="ai-chips">
+            <button onclick="setAIPrompt('වර්ගමූලයක් සරල කරන්නේ කොහොමද? සූත්‍රයත් උදාහරණයක්ත් දෙන්න.')">√ වර්ගමූලය</button>
+            <button onclick="setAIPrompt('භාග එකතු කිරීමේ නියමය සරලව සිංහලෙන් කියන්න.')">½ භාග</button>
+            <button onclick="setAIPrompt('ත්‍රිකෝණයක වර්ගඵලය සොයන සූත්‍රය සහ උදාහරණයක් දෙන්න.')">△ වර්ගඵලය</button>
+            <button onclick="setAIPrompt('දර්ශක නීති සිංහලෙන් කෙටි සටහනක් ලෙස දෙන්න.')">xⁿ දර්ශක</button>
+        </div>
+        <label>ශ්‍රේණිය</label>
+        <select id="ai-grade">
+            <option value="6">6 වසර</option><option value="7">7 වසර</option><option value="8">8 වසර</option>
+            <option value="9">9 වසර</option><option value="10">10 වසර</option><option value="11">11 වසර</option>
+        </select>
+        <label>ප්‍රශ්නය / උදව් අවශ්‍ය දේ</label>
+        <textarea id="ai-prompt" rows="5" placeholder="උදා: 3/4 + 2/5 විසඳන පියවර සිංහලෙන් කියන්න."></textarea>
+        <button class="btn-start ai-ask" onclick="askMathAI()">✨ පිළිතුර ගන්න</button>
+        <div id="ai-status" class="ai-status"></div>
+        <div id="ai-answer" class="ai-answer">AI පිළිතුර මෙතන පෙන්වයි...</div>
+        <div class="notes-box">
+            <h3>📚 6–11 වසර — කෙටි සටහන්</h3>
+            <p class="note">පහත පාඩම් ලැයිස්තු NIE ගුරු මාර්ගෝපදේශ/නිල අධ්‍යාපන සම්පත් සමඟ සසඳා සකස් කළ editable data එකකි. එක් එක් පාඩමට කෙටි සටහන් ඔබට code එකේ <b>STUDY_NOTES</b> කොටසෙන් වෙනස් කළ හැක.</p>
+            <select id="notes-grade" onchange="renderNotes()"></select>
+            <select id="notes-term" onchange="renderNotes()"><option value="1">1 වාරය</option><option value="2">2 වාරය</option><option value="3">3 වාරය</option></select>
+            <div id="notes-list"></div>
+        </div>
+        <button class="btn-start" onclick="hideAIScreen()">🔙 මුල් පිටුවට</button>
+    </div>
+
+    <div id="timetable-screen" class="hidden">
+        <div class="timetable-card">
+            <h3>📍 මිනුවන්ගොඩ WAYGA</h3>
+            <ul>
+                <li><b>9 වසර:</b> ඉරිදා ප.ව. 1:45 - 3:45</li>
+                <li><b>10 වසර:</b> ඉරිදා ප.ව. 3:45 - 5:45</li>
+                <li><b>11 වසර:</b> සඳුදා ප.ව. 4:00 - 6:00</li>
+                <li><b>10/11 Paper Class:</b> බ්‍රහස්පතින්දා ප.ව. 6:00 - 8:30</li>
+            </ul>
+            <h3>📍 ජා-ඇල SIP COLLEGE</h3>
+            <ul>
+                <li><b>7 වසර:</b> සිකුරාදා ප.ව. 4:00 - 6:00</li>
+                <li><b>8 වසර:</b> සෙනසුරාදා ප.ව. 5:30 - 7:30</li>
+                <li><b>11 වසර:</b> ඉරිදා පෙ.ව. 8:30 - 12:00</li>
+            </ul>
+            <h3>📍 උදම්මිට SIP COLLEGE</h3>
+            <ul>
+                <li><b>පන්ති පැවැත්වෙන වේලාවන් දැනගැනීම සඳහා අදම වට්සැප් පණිවිඩයක් එවන්න</b></li>
+            </ul>
+            <h3>🌐 ONLINE CLASSES</h3>
+            <ul>
+                <li><b>11 වසර:</b> ඉරිදා රාත්‍රී 9:00 - 11:00</li>
+                <li><b>10 වසර:</b> සිකුරාදා රාත්‍රී 9:00 - 11:00</li>
+                <li><b>9 වසර:</b> සඳුදා රාත්‍රී 9:00 - 11:00</li>
+            </ul>
+            <div class="timetable-note">
+                කාලසටහන් සහ විස්තර දැනගැනීමට <b>077 6752918</b> අංකයට වට්සැප් (WhatsApp) පණිවිඩයක් එවන්න.
+            </div>
+        </div>
+        <button class="btn-start" onclick="hideTimetable()" style="margin-top: 12px;">ආපසු මුල් පිටුවට 🔙</button>
+    </div>
+
+    <!-- STEP 6: LESSON-BASED PROBLEM SOLVING SECTION (6-11) -->
+
+    <script>
+    // SUPABASE CONFIGURATION
+    const SUPABASE_URL = 'https://olbtmrccdghenxtzslgx.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_rsPQaFPm5F5RGmTqht7e7g_x6_KkiYa';
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Audio Context (Sound Effects)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        if (type === 'correct') {
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    // පාඩම් අනුව නව ප්‍රශ්න බැංකුව — එක් ශ්‍රේණියකට ප්‍රශ්න 50 බැගින්
+    
+    /* ============================================================
+       ✏️ EDIT HERE — HASHAN SIR MATHS GAME
+       You can change these values anytime.
+       - QUESTION_TIME_SECONDS = time for each question
+       - DAILY_LEADERBOARD = true => today's scores only
+       - QUESTION_BANK = the examQuestions object below
+       ============================================================ */
+    const APP_CONFIG = {
+        QUESTION_TIME_SECONDS: 10,
+        DAILY_LEADERBOARD: true,
+        QUESTIONS_PER_GAME: 0, // 0 = keep playing until a wrong answer/time-out
+        SHOW_ANSWER_IN_GAME: false
+    };
+
+
+/* =========================================================
+   📚 EASY-EDIT STUDY NOTES
+   Change any Sinhala text inside STUDY_NOTES whenever you want.
+   The topic lists below are based on NIE lesson sequences for Grades 6–10,
+   and the Grade 11 sequence is cross-checked against the Grade 11 textbook
+   lesson sequence found online. Keep this object as your editable source.
+   ========================================================= */
+const STUDY_NOTES = {
+  "6": {
+    "1":[
+      ["වෘත්ත","වෘත්තයක කේන්ද්‍රය, අරය හා විෂ්කම්භය හඳුනාගන්න. විෂ්කම්භය = 2 × අරය."],
+      ["ස්ථානීය අගය","සංඛ්‍යාවක එක් එක් ඉලක්කමේ ස්ථානය අනුව එහි අගය තීරණය වේ. expanded form භාවිතා කර සංඛ්‍යා විග්‍රහ කරන්න."],
+      ["පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","එකතු කිරීම, අඩු කිරීම, ගුණ කිරීම හා බෙදීම නිවැරදි අනුපිළිවෙලින් කරන්න."]
+    ],
+    "2":[["භාග","සමාන හර ඇති භාග එකතු/අඩු කිරීමේදී ලව එකතු/අඩු කර හරය එලෙසම තබන්න."],["දශම","දශම ස්ථාන එකිනෙක යටින් තබා ගණනය කරන්න."],["සාධක හා ගුණාකාර","සංඛ්‍යාවක් ඉතිරියක් නැතිව බෙදන සංඛ්‍යා එහි සාධක වේ."]],
+    "3":[["වීජීය සංකේත","අකුරු මඟින් නොදන්නා අගයන් නිරූපණය කළ හැක. උදා: x+5."],["අනුපාත","a:b යනු a හා b අතර අනුපාතයයි."],["වර්ගඵලය","සෘජුකෝණාස්‍රයේ වර්ගඵලය = දිග × පළල."]]
+  },
+  "7": {
+    "1":[["සමමිතිය","දෙපස එකම හැඩයක් ලැබෙන පරිදි බෙදන රේඛාව සමමිතිය අක්ෂය ලෙස හැඳින්වේ."],["කුලක","කුලකයක් යනු නිශ්චිතව හඳුනාගත හැකි වස්තු සමූහයකි."],["පූර්ණ සංඛ්‍යා මත ගණිත කර්ම","ඍණ හා ධන පූර්ණ සංඛ්‍යා එකතු/අඩු කිරීමේදී ලකුණු නීති භාවිතා කරන්න."]],
+    "2":[["භාග","භාග සරල කිරීමේදී ලව හා හරය පොදු සාධකයකින් බෙදන්න."],["වීජීය ප්‍රකාශන","සමාන පද එකතු කළ හැක: 3x+2x=5x."],["වර්ගඵලය","ත්‍රිකෝණයේ වර්ගඵලය = ½ × පාදය × උස."]],
+    "3":[["අනුපාත","අනුපාත සරල කිරීමේදී දෙපසම එකම පොදු සාධකයකින් බෙදන්න."],["ප්‍රතිශත","ප්‍රතිශතයක් = (කොටස/මුළු එකතුව) × 100%."],["දත්ත නිරූපණය","වගු, රූපසටහන් හා තීරු ප්‍රස්ථාර මඟින් දත්ත නිරූපණය කළ හැක."]]
+  },
+  "8": {
+    "1":[["සංඛ්‍යා රටා","අනුක්‍රමයක පද අතර රටාව හඳුනාගෙන ඊළඟ පදය සොයන්න."],["පරිමිතිය","හැඩයක සියලු පැතිවල දිග එකතුව පරිමිතියයි."],["කෝණ","සෘජු කෝණය 90°, සෘජු රේඛීය කෝණය 180°, පූර්ණ කෝණය 360°."]],
+    "2":[["සමමිතිය","රූපයක සමමිතිය අක්ෂ හඳුනාගන්න."],["ත්‍රිකෝණ","ත්‍රිකෝණයක අභ්‍යන්තර කෝණ එකතුව 180°."],["භාග","භාග ගණනයේදී අවශ්‍ය නම් පොදු හරයක් ලබාගන්න."]],
+    "3":[["පරිමාව හා ධාරිතාව","ඝනකයක පරිමාව = පැත්ත³; ඝනකායක පරිමාව = දිග × පළල × උස."],["වෘත්ත","වෘත්තයේ පරිධිය = 2πr."],["සම්භාවිතාව","සම්භාවිතාව = හිතකර ප්‍රතිඵල ගණන / සියලු හැකි ප්‍රතිඵල ගණන."]]
+  },
+  "9": {
+    "1":[["විද්‍යාත්මක අංකනය","a×10ⁿ ආකාරයෙන්, 1≤a<10 ලෙස විශාල/කුඩා සංඛ්‍යා ලියන්න."],["සංඛ්‍යා රටා","සාමාන්‍ය පදය හඳුනාගෙන රටාව සොයන්න."],["භාග","BODMAS අනුපිළිවෙල අනුව භාග ප්‍රකාශන සරල කරන්න."]],
+    "2":[["වීජීය ප්‍රකාශන","බෙදාහැරීමේ නියමය: a(b+c)=ab+ac."],["සෘජු සමානුපාත","y∝x නම් y=kx ලෙස ලිවිය හැක."],["ප්‍රතිශත","ලාභ ප්‍රතිශතය = ලාභ/ගැනුම් මිල ×100%." ]],
+    "3":[["කෝණ හා ජ්‍යාමිතිය","සමාන්තර රේඛා අතර අනුරූප/විකල්ප කෝණ සමාන විය හැක."],["වර්ගඵලය","සමාන්තර චතුරස්‍රයේ වර්ගඵලය = පාදය × සිරස් උස."],["දත්ත","මධ්‍යන්‍යය = දත්ත එකතුව / දත්ත ගණන."]]
+  },
+  "10": {
+    "1":[["පරිමිතිය","වෘත්ත පරිධිය = 2πr; සෘජුකෝණාස්‍ර පරිමිතිය = 2(l+w)."],["වර්ගමූලය","√a යනු a හි වර්ගමූලයයි. පූර්ණ වර්ග අතරින් ආසන්න අගය හඳුනාගත හැක."],["භාග","භාග සරල කර BODMAS අනුව මෙහෙයුම් කරන්න."],["ද්වීපද ප්‍රකාශන","(a+b)²=a²+2ab+b²; (a-b)²=a²-2ab+b²."],["සමගුණතාව","සමාන හැඩ හා සමාන ප්‍රමාණ ඇති රූප congruent වේ."]],
+    "2":[["ප්‍රතිශත","වට්ටම් = ලකුණු මිල × වට්ටම් ප්‍රතිශතය."],["සමීකරණ","සමීකරණයක දෙපසට එකම ක්‍රියාව යෙදීමෙන් x හුදකලා කරන්න."],["කුලක","A∪B යනු A හෝ B හි ඇති සියලු සාමාජිකයන්; A∩B යනු දෙකේම පොදු සාමාජිකයන්."],["ලඝු","logₐx=y ⇔ aʸ=x."],["ප්‍රස්ථාර","කාර්යයක් x-y තලයේ ලක්ෂ්‍ය ලෙස නිරූපණය කළ හැක."]],
+    "3":[["සූත්‍ර","දී ඇති සූත්‍රයකින් අවශ්‍ය විචල්‍යය හුදකලා කර අගයන් ආදේශ කරන්න."],["අංක ගණිත ප්‍රගතිය","පද අතර පොදු වෙනස d නම් n වන පදය aₙ=a+(n-1)d."],["සම්භාවිතාව","0≤P(A)≤1."],["වෘත්ත කෝණ","එකම චාපය මත මධ්‍ය කෝණය පරිධි කෝණයේ දෙගුණයකි."],["මතුපිට වර්ගඵලය හා පරිමාව","ඝනකායක පරිමාව = lwh; සිලින්ඩරයක පරිමාව = πr²h."]]
+  },
+  "11": {
+    "1":[["තාත්වික සංඛ්‍යා","තාත්වික සංඛ්‍යා අතර පරිමේය හා අපරිමේය සංඛ්‍යා ඇතුළත් වේ."],["දර්ශක හා ලඝු I","aᵐ×aⁿ=aᵐ⁺ⁿ; aᵐ÷aⁿ=aᵐ⁻ⁿ; (aᵐ)ⁿ=aᵐⁿ."],["දර්ශක හා ලඝු II","logₐ(xy)=logₐx+logₐy; logₐ(x/y)=logₐx-logₐy."],["ඝන වස්තු වල මතුපිට වර්ගඵලය","ඝන වස්තුවේ සියලු මතුපිටවල වර්ගඵල එකතුව සම්පූර්ණ මතුපිට වර්ගඵලයයි."],["ඝන වස්තු වල පරිමාව","ඝනකාය V=lwh; සිලින්ඩරය V=πr²h."]],
+    "2":[["ප්‍රතිශත","ලාභ/අලාභ, වට්ටම් හා පොලී සම්බන්ධ ගණනයන් කරන්න."],["කොටස් වෙළඳපොළ","කොටසක මිල, ලාභාංශ හා ප්‍රතිලාභ අනුපාත සම්බන්ධ ගණනයන්."],["මධ්‍ය ලක්ෂ්‍ය ප්‍රමේයය","ත්‍රිකෝණයක දෙපස මධ්‍ය ලක්ෂ්‍ය සම්බන්ධ කරන රේඛාව තෙවන පැත්තට සමාන්තරය."],["ප්‍රස්ථාර","රේඛීය/වර්ග ප්‍රස්ථාරවලින් අගයන් හා වෙනස්කම් කියවන්න."],["සූත්‍ර","දී ඇති සූත්‍රය පරිවර්තනය කර නොදන්නා අගය සොයන්න."],["සමකෝණික ත්‍රිකෝණ","සමාන කෝණ ඇති ත්‍රිකෝණවල අනුරූප පැති සමානුපාතික වේ."],["දත්ත නිරූපණය හා අර්ථකථනය","මධ්‍යන්‍යය, මධ්‍යකය, බහුලකය හා ප්‍රස්ථාර භාවිතා කරන්න."],["ගුණෝත්තර ප්‍රගතිය","පොදු අනුපාතය r නම් පද: a, ar, ar²,..."]],
+    "3":[["පයිතගරස් ප්‍රමේයය","සෘජුකෝණී ත්‍රිකෝණයක a²+b²=c²."],["ත්‍රිකෝණමිතිය","sinθ=opposite/hypotenuse, cosθ=adjacent/hypotenuse, tanθ=opposite/adjacent."],["මාත්‍රිකා","මාත්‍රිකා එකතු කිරීම/ගුණ කිරීමේදී පේළි හා තීරු අනුපිළිවෙල සලකන්න."],["අසමානතා","අසමානතාවයක ඍණ සංඛ්‍යාවකින් ගුණ/බෙදූ විට ලකුණ පෙරළේ."],["චක්‍රීය චතුරස්‍ර","චක්‍රීය චතුරස්‍රයක විරුද්ධ කෝණ දෙකේ එකතුව 180°."],["ස්පර්ශක","වෘත්තයක ස්පර්ශකය ස්පර්ශ ලක්ෂ්‍යයේ අරයට ලම්බ වේ."],["ඉදිකිරීම්","කොම්පාසුව හා සෘජු දණ්ඩය භාවිතයෙන් නිශ්චිත ජ්‍යාමිතික ඉදිකිරීම් කරන්න."],["කුලක","සංගමය, ඡේදනය හා පරිපූරක කුලක සම්බන්ධ ගැටලු විසඳන්න."],["සම්භාවිතාව","P(A)=හිතකර අවස්ථා/සියලු සමාන-හැකි අවස්ථා."]]
+  }
+};
+
+const AI_CONFIG = {
+  // Supabase Edge Function URL. Keep the Gemini key on the server, NEVER in this HTML.
+  FUNCTION_URL: 'https://olbtmrccdghenxtzslgx.supabase.co/functions/v1/math-ai',
+  LANGUAGE: 'සිංහල',
+  MAX_CHARS: 1800
+};
+
+const examQuestions = {
+        "6": [
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "වෘත්තයක අරය 5 cm නම් විෂ්කම්භය කීයද?",
+                        "a": 10
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "වෘත්තයක විෂ්කම්භය 18 cm නම් අරය කීයද?",
+                        "a": 9
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 7 cm වූ වෘත්තයක වටප්‍රමාණය π=22/7 ලෙස ගත් විට කීයද?",
+                        "a": 44
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 14 cm වූ වෘත්තයක වටප්‍රමාණය කීයද? (π=22/7)",
+                        "a": 88
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "විෂ්කම්භය 14 cm වූ වෘත්තයක අරය කීයද?",
+                        "a": 7
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 3 cm වූ වෘත්තයක විෂ්කම්භය කීයද?",
+                        "a": 6
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "විෂ්කම්භය 20 cm වූ වෘත්තයක අරය කීයද?",
+                        "a": 10
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 10 cm වූ වෘත්තයක වටප්‍රමාණය කීයද? (π=3.14)",
+                        "a": 62.8
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 7 cm වූ වෘත්තයක වර්ගඵලය කීයද? (π=22/7)",
+                        "a": 154
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 14 cm වූ වෘත්තයක වර්ගඵලය කීයද? (π=22/7)",
+                        "a": 616
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "විෂ්කම්භය 10 cm වූ වෘත්තයක අරය කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "වෘත්තයක අරය 12 cm නම් විෂ්කම්භය කීයද?",
+                        "a": 24
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 21 cm වූ වෘත්තයක වටප්‍රමාණය කීයද? (π=22/7)",
+                        "a": 132
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 28 cm වූ වෘත්තයක වර්ගඵලය කීයද? (π=22/7)",
+                        "a": 2464
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "විෂ්කම්භය 28 cm වූ වෘත්තයක අරය කීයද?",
+                        "a": 14
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "අරය 1 cm වූ වෘත්තයක විෂ්කම්භය කීයද?",
+                        "a": 2
+                },
+                {
+                        "lesson": "වෘත්ත",
+                        "q": "විෂ්කම්භය 30 cm වූ වෘත්තයක අරය කීයද?",
+                        "a": 15
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "5,432 හි 5 හි ස්ථානීය අගය කීයද?",
+                        "a": 5000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "7,806 හි 8 හි ස්ථානීය අගය කීයද?",
+                        "a": 800
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "34,219 හි 4 හි ස්ථානීය අගය කීයද?",
+                        "a": 4000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "90,125 හි 9 හි ස්ථානීය අගය කීයද?",
+                        "a": 90000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "6,507 හි 5 හි ස්ථානීය අගය කීයද?",
+                        "a": 500
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "48,321 හි 3 හි ස්ථානීය අගය කීයද?",
+                        "a": 300
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "72,604 හි 7 හි ස්ථානීය අගය කීයද?",
+                        "a": 70000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "105,432 හි 1 හි ස්ථානීය අගය කීයද?",
+                        "a": 100000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "9,876 හි 6 හි ස්ථානීය අගය කීයද?",
+                        "a": 70
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "23,456 හි 5 හි ස්ථානීය අගය කීයද?",
+                        "a": 50
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "56,789 හි 8 හි ස්ථානීය අගය කීයද?",
+                        "a": 80
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "400,321 හි 4 හි ස්ථානීය අගය කීයද?",
+                        "a": 400000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "81,234 හි 2 හි ස්ථානීය අගය කීයද?",
+                        "a": 200
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "12,345 හි 1 හි ස්ථානීය අගය කීයද?",
+                        "a": 10000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "98,765 හි 9 හි ස්ථානීය අගය කීයද?",
+                        "a": 90000
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "65,432 හි 4 හි ස්ථානීය අගය කීයද?",
+                        "a": 400
+                },
+                {
+                        "lesson": "ස්ථානීය අගය",
+                        "q": "7,654 හි 7 හි ස්ථානීය අගය කීයද?",
+                        "a": 7000
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "25 + 37 = ?",
+                        "a": 62
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "84 - 29 = ?",
+                        "a": 55
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "12 × 8 = ?",
+                        "a": 96
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "144 ÷ 12 = ?",
+                        "a": 12
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "35 + 48 - 20 = ?",
+                        "a": 63
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "9 × 7 + 5 = ?",
+                        "a": 68
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "100 - 36 ÷ 6 = ?",
+                        "a": 94
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "(18 + 6) ÷ 4 = ?",
+                        "a": 6
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "7 × (9 - 4) = ?",
+                        "a": 35
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "200 ÷ 5 + 12 = ?",
+                        "a": 52
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "63 - 8 × 4 = ?",
+                        "a": 31
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "(25 + 15) × 2 = ?",
+                        "a": 80
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "96 ÷ (8 + 4) = ?",
+                        "a": 8
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "45 + 15 × 2 = ?",
+                        "a": 75
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "(50 - 14) ÷ 6 = ?",
+                        "a": 6
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යා මත ගණිත කර්ම",
+                        "q": "11 × 9 - 20 = ?",
+                        "a": 79
+                }
+        ],
+        "7": [
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමමිතියෙහි රූපය දෙකට බෙදන රේඛාව හැඳින්වෙන්නේ කුමක් ලෙසද?",
+                        "a": "සමමිති අක්ෂය"
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමචතුරස්‍රයක සමමිති අක්ෂ ගණන කීයද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සෘජුකෝණාස්‍රයක සමමිති අක්ෂ ගණන කීයද?",
+                        "a": 2
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමපාද ත්‍රිකෝණයක සමමිති අක්ෂ ගණන කීයද?",
+                        "a": 1
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමබාහු ත්‍රිකෝණයක සමමිති අක්ෂ ගණන කීයද?",
+                        "a": 3
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "වෘත්තයක සමමිති අක්ෂ ගණන කීයද?",
+                        "a": "අනන්ත"
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "අර්ධ වෘත්තයක සිරස් සමමිති අක්ෂ ගණන කීයද?",
+                        "a": 1
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමචතුරස්‍රයක අංශු සමමිති රේඛා කීයක් තිබේද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමචතුරස්‍රයක භ්‍රමණ සමමිතියේ අවම කෝණය කීයද?",
+                        "a": 90
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සෘජුකෝණාස්‍රයක භ්‍රමණ සමමිතියේ අවම කෝණය කීයද?",
+                        "a": 180
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමබාහු ත්‍රිකෝණයක භ්‍රමණ සමමිතියේ අවම කෝණය කීයද?",
+                        "a": 120
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමචතුරස්‍රයක භ්‍රමණ සමමිතියේ අනුපිළිවෙල කීයද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමබාහු ත්‍රිකෝණයක භ්‍රමණ සමමිතියේ අනුපිළිවෙල කීයද?",
+                        "a": 3
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සෘජුකෝණාස්‍රයක භ්‍රමණ සමමිතියේ අනුපිළිවෙල කීයද?",
+                        "a": 2
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමචතුරස්‍රයේ සියලු පැති සමාන නිසා එයට රේඛීය සමමිතිය තිබේද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "වෘත්තයකට එක් සමමිති අක්ෂයක් පමණක් තිබේද?",
+                        "a": "නැත"
+                },
+                {
+                        "lesson": "සමමිතිය",
+                        "q": "සමබාහු ත්‍රිකෝණයේ සෑම අභ්‍යන්තර කෝණයක්ම කීයද?",
+                        "a": 60
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3,4} නම් A හි සාමාජික සංඛ්‍යාව කීයද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "B={a,e,i,o,u} නම් B හි සාමාජික සංඛ්‍යාව කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={2,4,6,8} හි 5 අයත්ද?",
+                        "a": "නැත"
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3} හා B={3,4,5} නම් A∩B කුමක්ද?",
+                        "a": 3
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3} හා B={3,4,5} නම් A∪B හි සාමාජික සංඛ්‍යාව කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "හිස් කුලකයක සාමාජික සංඛ්‍යාව කීයද?",
+                        "a": 0
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3,4,5} නම් 3 ∈ A ද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={2,4,6,8} නම් 7 ∈ A ද?",
+                        "a": "නැත"
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={a,b,c} හි උපකුලක ගණන කීයද?",
+                        "a": 8
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3,4} හි උපකුලක ගණන කීයද?",
+                        "a": 16
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3} හා B={1,2,3} නම් A=B ද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3} හා B={4,5} නම් A∩B හි සාමාජික සංඛ්‍යාව කීයද?",
+                        "a": 0
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,2,3} හා B={3,4} නම් A∪B කුලකයේ සාමාජිකයන් කීදෙනෙක්ද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "10ට අඩු ඉරට්ටේ ධන පූර්ණ සංඛ්‍යා කුලකයේ සාමාජිකයන් කීදෙනෙක්ද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "10ට අඩු ඔත්තේ ධන පූර්ණ සංඛ්‍යා කුලකයේ සාමාජිකයන් කීදෙනෙක්ද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={2,3,5,7} හි 5 අයත්ද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "කුලක",
+                        "q": "A={1,3,5,7} හා B={2,4,6,8} නම් A∩B හි සාමාජික සංඛ්‍යාව කීයද?",
+                        "a": 0
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-8)+5 = ?",
+                        "a": -3
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "7+(-12) = ?",
+                        "a": -5
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-6)+(-9) = ?",
+                        "a": -15
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-15)-(-7) = ?",
+                        "a": -8
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "9-(-4) = ?",
+                        "a": 13
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-5)×6 = ?",
+                        "a": -30
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-7)×(-8) = ?",
+                        "a": 56
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "48÷(-6) = ?",
+                        "a": -8
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-63)÷(-9) = ?",
+                        "a": 7
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-4)+(-6)+10 = ?",
+                        "a": 0
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "12-18+5 = ?",
+                        "a": -1
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-3)×(-5)-4 = ?",
+                        "a": 11
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "20÷(-4)+7 = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-2)×8+3 = ?",
+                        "a": -13
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "15-(-5)×2 = ?",
+                        "a": 25
+                },
+                {
+                        "lesson": "පූර්ණ සංඛ්‍යාමත ගණිත කර්ම",
+                        "q": "(-36)÷6-2 = ?",
+                        "a": -8
+                }
+        ],
+        "8": [
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "2, 5, 8, 11, ... ඊළඟ සංඛ්‍යාව කීයද?",
+                        "a": 14
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "4, 8, 12, 16, ... ඊළඟ සංඛ්‍යාව කීයද?",
+                        "a": 20
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "3, 6, 12, 24, ... ඊළඟ සංඛ්‍යාව කීයද?",
+                        "a": 48
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "81, 27, 9, 3, ... ඊළඟ සංඛ්‍යාව කීයද?",
+                        "a": 1
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "1, 4, 7, 10, ... 10 වන පදය කීයද?",
+                        "a": 28
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "5, 10, 15, 20, ... 12 වන පදය කීයද?",
+                        "a": 60
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "2, 4, 8, 16, ... 7 වන පදය කීයද?",
+                        "a": 128
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "10, 20, 30, 40, ... 15 වන පදය කීයද?",
+                        "a": 150
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "100, 90, 80, 70, ... ඊළඟ සංඛ්‍යාව කීයද?",
+                        "a": 60
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "7, 14, 21, 28, ... 9 වන පදය කීයද?",
+                        "a": 63
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "1, 3, 5, 7, ... 20 වන පදය කීයද?",
+                        "a": 39
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "6, 12, 18, 24, ... 11 වන පදය කීයද?",
+                        "a": 66
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "50, 45, 40, 35, ... 8 වන පදය කීයද?",
+                        "a": 15
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "3, 9, 27, ... ඊළඟ සංඛ්‍යාව කීයද?",
+                        "a": 81
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "64, 32, 16, 8, ... ඊළඟ සංඛ්‍යාව කීයද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "12, 15, 18, 21, ... 10 වන පදය කීයද?",
+                        "a": 39
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "9, 18, 27, 36, ... 8 වන පදය කීයද?",
+                        "a": 72
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 8 cm හා පළල 5 cm සෘජුකෝණාස්‍රයක පරිමිතිය කීයද?",
+                        "a": 26
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 12 m හා පළල 7 m සෘජුකෝණාස්‍රයක පරිමිතිය කීයද?",
+                        "a": 38
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පැත්ත 6 cm වූ සමචතුරස්‍රයක පරිමිතිය කීයද?",
+                        "a": 24
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පැත්ත 9 m වූ සමචතුරස්‍රයක පරිමිතිය කීයද?",
+                        "a": 36
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 15 cm, පළල 4 cm නම් පරිමිතිය කීයද?",
+                        "a": 38
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "සෘජුකෝණාස්‍රයක පරිමිතිය 30 cm හා දිග 10 cm නම් පළල කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "සමචතුරස්‍රයක පරිමිතිය 28 cm නම් එක් පැත්තක දිග කීයද?",
+                        "a": 7
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 20 m හා පළල 8 m වත්තක පරිමිතිය කීයද?",
+                        "a": 56
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පැත්ත 11 cm වූ සමචතුරස්‍රයක පරිමිතිය කීයද?",
+                        "a": 44
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 18 cm හා පළල 6 cm සෘජුකෝණාස්‍රයක පරිමිතිය කීයද?",
+                        "a": 48
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "සමචතුරස්‍රයක එක් පැත්තක් 13 m නම් පරිමිතිය කීයද?",
+                        "a": 52
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 9 cm හා පළල 3 cm සෘජුකෝණාස්‍රයක පරිමිතිය කීයද?",
+                        "a": 24
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පරිමිතිය 40 cm වූ සමචතුරස්‍රයක පැත්ත කීයද?",
+                        "a": 10
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 14 m හා පළල 9 m නම් පරිමිතිය කීයද?",
+                        "a": 46
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 25 cm හා පළල 5 cm නම් පරිමිතිය කීයද?",
+                        "a": 60
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "සමචතුරස්‍රයක පැත්ත 7.5 cm නම් පරිමිතිය කීයද?",
+                        "a": 30
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 16 m හා පළල 12 m නම් පරිමිතිය කීයද?",
+                        "a": 56
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "සෘජු කෝණයක විශාලත්වය කීයද?",
+                        "a": 90
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "සරල කෝණයක විශාලත්වය කීයද?",
+                        "a": 180
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "පූර්ණ කෝණයක විශාලත්වය කීයද?",
+                        "a": 360
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "45° කෝණය කුමන වර්ගයේද?",
+                        "a": "තියුණු කෝණය"
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "120° කෝණය කුමන වර්ගයේද?",
+                        "a": "මන්ද කෝණය"
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "90°ට වඩා අඩු කෝණයක් කුමන වර්ගයේද?",
+                        "a": "තියුණු කෝණය"
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "90°ට වැඩි නමුත් 180°ට අඩු කෝණයක් කුමන වර්ගයේද?",
+                        "a": "මන්ද කෝණය"
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "සරල කෝණයකින් 65° අඩු කළ විට ඉතිරි කෝණය කීයද?",
+                        "a": 115
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "සෘජු කෝණයකින් 35° අඩු කළ විට කීයද?",
+                        "a": 55
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "ත්‍රිකෝණයක කෝණ දෙක 50° හා 60° නම් තුන්වන කෝණය කීයද?",
+                        "a": 70
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "ත්‍රිකෝණයක කෝණ දෙක 35° හා 75° නම් තුන්වන කෝණය කීයද?",
+                        "a": 70
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "චතුරස්‍රයක අභ්‍යන්තර කෝණ එකතුව කීයද?",
+                        "a": 360
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "ත්‍රිකෝණයක අභ්‍යන්තර කෝණ එකතුව කීයද?",
+                        "a": 180
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "සෘජු රේඛාවක එක් කෝණයක් 72° නම් අනෙක් කෝණය කීයද?",
+                        "a": 108
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "පූර්ණ කෝණයක 90° කොටසක් ඉවත් කළ විට ඉතිරි කෝණය කීයද?",
+                        "a": 270
+                },
+                {
+                        "lesson": "කෝණ",
+                        "q": "සමචතුරස්‍රයක එක් අභ්‍යන්තර කෝණයක් කීයද?",
+                        "a": 90
+                }
+        ],
+        "9": [
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "5, 9, 13, 17, ... ඊළඟ පදය කීයද?",
+                        "a": 21
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "2, 6, 18, 54, ... ඊළඟ පදය කීයද?",
+                        "a": 162
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "20, 17, 14, 11, ... ඊළඟ පදය කීයද?",
+                        "a": 8
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "1, 4, 9, 16, ... ඊළඟ පදය කීයද?",
+                        "a": 25
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "1, 8, 27, 64, ... ඊළඟ පදය කීයද?",
+                        "a": 125
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "7, 12, 17, 22, ... 15 වන පදය කීයද?",
+                        "a": 77
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "10, 13, 16, 19, ... 20 වන පදය කීයද?",
+                        "a": 67
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "3, 6, 12, 24, ... 8 වන පදය කීයද?",
+                        "a": 384
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "96, 48, 24, 12, ... 6 වන පදය කීයද?",
+                        "a": 3
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "4, 7, 10, 13, ... 12 වන පදය කීයද?",
+                        "a": 37
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "2, 5, 10, 17, 26, ... ඊළඟ පදය කීයද?",
+                        "a": 37
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "11, 22, 33, 44, ... 9 වන පදය කීයද?",
+                        "a": 99
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "50, 47, 44, 41, ... 10 වන පදය කීයද?",
+                        "a": 23
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "6, 18, 54, ... ඊළඟ පදය කීයද?",
+                        "a": 162
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "100, 95, 90, ... 14 වන පදය කීයද?",
+                        "a": 35
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "8, 16, 24, 32, ... 25 වන පදය කීයද?",
+                        "a": 200
+                },
+                {
+                        "lesson": "සංඛ්‍යා රටා",
+                        "q": "1, 2, 4, 8, ... 10 වන පදය කීයද?",
+                        "a": 512
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "ද්විමය 101₂ දශමයට කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "ද්විමය 110₂ දශමයට කීයද?",
+                        "a": 6
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "ද්විමය 1001₂ දශමයට කීයද?",
+                        "a": 9
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "ද්විමය 1111₂ දශමයට කීයද?",
+                        "a": 15
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "ද්විමය 1010₂ දශමයට කීයද?",
+                        "a": 10
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "දශම 5 සංඛ්‍යාව ද්විමය ලෙස කීයද?",
+                        "a": "101₂"
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "දශම 8 සංඛ්‍යාව ද්විමය ලෙස කීයද?",
+                        "a": "1000₂"
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "දශම 10 සංඛ්‍යාව ද්විමය ලෙස කීයද?",
+                        "a": "1010₂"
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "දශම 12 සංඛ්‍යාව ද්විමය ලෙස කීයද?",
+                        "a": "1100₂"
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "ද්විමය 10000₂ දශමයට කීයද?",
+                        "a": 16
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "3 පාදයේ 12₃ දශමයට කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "3 පාදයේ 21₃ දශමයට කීයද?",
+                        "a": 7
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "4 පාදයේ 12₄ දශමයට කීයද?",
+                        "a": 6
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "5 පාදයේ 13₅ දශමයට කීයද?",
+                        "a": 8
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "දශම 7 සංඛ්‍යාව 3 පාදයේ කීයද?",
+                        "a": "21₃"
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "දශම 10 සංඛ්‍යාව 3 පාදයේ කීයද?",
+                        "a": "101₃"
+                },
+                {
+                        "lesson": "සංඛ්‍යා පාද",
+                        "q": "4 පාදයේ 23₄ දශමයට කීයද?",
+                        "a": 11
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "1/2 + 1/4 = ?",
+                        "a": 0.75
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3/4 - 1/4 = ?",
+                        "a": 0.5
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2/3 + 1/3 = ?",
+                        "a": 1
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3/5 + 1/5 = ?",
+                        "a": 0.8
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "5/6 - 1/6 = ?",
+                        "a": 0.6666666666666666
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2/3 × 3/4 = ?",
+                        "a": 0.5
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3/5 × 10 = ?",
+                        "a": 6
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "4/7 ÷ 2/7 = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "1/2 ÷ 1/4 = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2/5 + 1/10 = ?",
+                        "a": 0.5
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3/4 + 1/8 = ?",
+                        "a": 0.875
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "5/6 - 1/3 = ?",
+                        "a": 0.5
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2/7 × 7/4 = ?",
+                        "a": 0.5
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3/8 ÷ 3/4 = ?",
+                        "a": 0.5
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "1 1/2 + 1/2 = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2 1/4 - 1/4 = ?",
+                        "a": 2
+                }
+        ],
+        "10": [
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 12 cm හා පළල 8 cm සෘජුකෝණාස්‍රයක පරිමිතිය කීයද?",
+                        "a": 40
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පැත්ත 15 cm වූ සමචතුරස්‍රයක පරිමිතිය කීයද?",
+                        "a": 60
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පරිමිතිය 54 cm වූ සමචතුරස්‍රයක පැත්ත කීයද?",
+                        "a": 13.5
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 20 m හා පළල 12 m සෘජුකෝණාස්‍රයක පරිමිතිය කීයද?",
+                        "a": 64
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පරිමිතිය 70 cm හා දිග 20 cm නම් පළල කීයද?",
+                        "a": 15
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "ත්‍රිකෝණයක පැති 7, 9, 12 cm නම් පරිමිතිය කීයද?",
+                        "a": 28
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "ත්‍රිකෝණයක පැති 10, 10, 14 cm නම් පරිමිතිය කීයද?",
+                        "a": 34
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "සෘජුකෝණාස්‍රයක දිග පළලට වඩා 5 cm වැඩි අතර පළල 8 cm නම් පරිමිතිය කීයද?",
+                        "a": 42
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පැත්ත 11.5 cm වූ සමචතුරස්‍රයක පරිමිතිය කීයද?",
+                        "a": 46
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 25 cm හා පළල 10 cm සෘජුකෝණාස්‍රයක පරිමිතිය කීයද?",
+                        "a": 70
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පරිමිතිය 96 m වූ සමචතුරස්‍රයක පැත්ත කීයද?",
+                        "a": 24
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "ත්‍රිකෝණයක පරිමිතිය 36 cm; පැති දෙක 10 cm සහ 12 cm නම් තුන්වන පැත්ත කීයද?",
+                        "a": 14
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 18 m හා පළල 11 m නම් පරිමිතිය කීයද?",
+                        "a": 58
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "පැත්ත 7.2 cm වූ සමචතුරස්‍රයක පරිමිතිය කීයද?",
+                        "a": 28.8
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 30 cm හා පළල 15 cm නම් පරිමිතිය කීයද?",
+                        "a": 90
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "දිග 9 cm හා පළල 6.5 cm නම් පරිමිතිය කීයද?",
+                        "a": 31
+                },
+                {
+                        "lesson": "පරිමිතිය",
+                        "q": "සෘජුකෝණාස්‍රයක පරිමිතිය 50 cm හා පළල 9 cm නම් දිග කීයද?",
+                        "a": 16
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√144 = ?",
+                        "a": 12
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√169 = ?",
+                        "a": 13
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√196 = ?",
+                        "a": 14
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√225 = ?",
+                        "a": 15
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√256 = ?",
+                        "a": 16
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√324 = ?",
+                        "a": 18
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√400 = ?",
+                        "a": 20
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√625 = ?",
+                        "a": 25
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√729 = ?",
+                        "a": 27
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√900 = ?",
+                        "a": 30
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√1024 = ?",
+                        "a": 32
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "x²=361 නම් x හි ධන අගය කීයද?",
+                        "a": 19
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "x²=484 නම් x හි ධන අගය කීයද?",
+                        "a": 22
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√0.25 = ?",
+                        "a": 0.5
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√0.81 = ?",
+                        "a": 0.9
+                },
+                {
+                        "lesson": "වර්ගමූලය",
+                        "q": "√1.44 = ?",
+                        "a": 1.2
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2/3 + 1/6 = ?",
+                        "a": 0.8333333333333334
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "5/8 - 1/4 = ?",
+                        "a": 0.375
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3/5 × 10/9 = ?",
+                        "a": 0.6666666666666666
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "7/8 ÷ 7/16 = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2/3 + 3/4 = ?",
+                        "a": 1.4166666666666667
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "5/6 - 1/4 = ?",
+                        "a": 0.5833333333333334
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "4/9 × 3/8 = ?",
+                        "a": 0.16666666666666666
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "5/12 ÷ 10/9 = ?",
+                        "a": 0.375
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "1 2/3 + 2 1/3 = ?",
+                        "a": 4
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3 1/4 - 1 3/4 = ?",
+                        "a": 1.5
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "7/10 + 2/5 = ?",
+                        "a": 1.1
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "9/10 - 1/5 = ?",
+                        "a": 0.7
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "3/7 × 14/9 = ?",
+                        "a": 0.6666666666666666
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "5/6 ÷ 5/12 = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "2/5 + 3/10 = ?",
+                        "a": 0.7
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "11/12 - 1/3 = ?",
+                        "a": 0.5833333333333334
+                },
+                {
+                        "lesson": "භාග",
+                        "q": "7/12 + 1/6 = ?",
+                        "a": 0.75
+                }
+        ],
+        "11": [
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "√2 තාත්වික සංඛ්‍යාවක්ද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "-5 තාත්වික සංඛ්‍යාවක්ද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "0 තාත්වික සංඛ්‍යාවක්ද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "3/4 තාත්වික සංඛ්‍යාවක්ද?",
+                        "a": "ඔව්"
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "√(-4) තාත්වික සංඛ්‍යාවක්ද?",
+                        "a": "නැත"
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "|−7| = ?",
+                        "a": 7
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "|5−9| = ?",
+                        "a": 4
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "−3 සහ 2 අතර පූර්ණ සංඛ්‍යා කීයක් තිබේද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "2/3 + 1/6 = ?",
+                        "a": 0.8333333333333334
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "√49 = ?",
+                        "a": 7
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "√81 = ?",
+                        "a": 9
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "3.5 + 2.75 = ?",
+                        "a": 6.25
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "−4.5 + 7 = ?",
+                        "a": 2.5
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "−2.5 − 3.5 = ?",
+                        "a": -6
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "(−3)² = ?",
+                        "a": 9
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "√121 = ?",
+                        "a": 11
+                },
+                {
+                        "lesson": "තාත්වික සංඛ්‍යා",
+                        "q": "|−12| + |−3| = ?",
+                        "a": 15
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "2³ = ?",
+                        "a": 8
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "5² = ?",
+                        "a": 25
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "10⁴ = ?",
+                        "a": 10000
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "3⁴ = ?",
+                        "a": 81
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "2⁵ × 2² = 2ⁿ නම් n කීයද?",
+                        "a": 7
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "5⁶ ÷ 5² = 5ⁿ නම් n කීයද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "(2³)² = 2ⁿ නම් n කීයද?",
+                        "a": 6
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "10⁻² = ?",
+                        "a": 0.01
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "2⁰ = ?",
+                        "a": 1
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "log₁₀(100) = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "log₁₀(1000) = ?",
+                        "a": 3
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "log₂(8) = ?",
+                        "a": 3
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "log₃(27) = ?",
+                        "a": 3
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "log₅(25) = ?",
+                        "a": 2
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "2ⁿ=32 නම් n කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "දර්ශක හා ලඝු",
+                        "q": "3ⁿ=81 නම් n කීයද?",
+                        "a": 4
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 5 cm නම් එක් මුහුණක වර්ගඵලය කීයද?",
+                        "a": 25
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 4 cm නම් සම්පූර්ණ පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 96
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 6 cm නම් සම්පූර්ණ පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 216
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක දිග 5 cm, පළල 3 cm, උස 2 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 62
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක l=10 cm, w=4 cm, h=3 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 164
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක l=6 cm, w=5 cm, h=4 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 148
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 10 cm නම් සම්පූර්ණ පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 600
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක l=8 cm, w=2 cm, h=5 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 132
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක l=7 cm, w=3 cm, h=2 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 82
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 8 cm නම් සම්පූර්ණ පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 384
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක l=12 cm, w=5 cm, h=2 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 188
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 3.5 cm නම් එක් මුහුණක වර්ගඵලය කීයද?",
+                        "a": 12.25
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 3 cm නම් සම්පූර්ණ පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 54
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක l=9 cm, w=4 cm, h=1 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 98
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකාභයක l=10 cm, w=10 cm, h=2 cm නම් පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 280
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක සම්පූර්ණ පෘෂ්ඨ වර්ගඵලය 150 cm² නම් එක් පැත්තක දිග කීයද?",
+                        "a": 5
+                },
+                {
+                        "lesson": "ගණ වස්තු වල වර්ගඵලය",
+                        "q": "ඝනකයක පැත්ත 12 cm නම් සම්පූර්ණ පෘෂ්ඨ වර්ගඵලය කීයද?",
+                        "a": 864
+                }
+        ]
+};
+
+    let basicStep = 1, basicAnswer = true, score = 0, timerInterval;
+    let userName = "", userPhone = "", selectedGrade = "6", selectedType = "";
+    let currentQuestion = null, currentOptions = [], currentQuestionNumber = 0;
+    let gameEnded = false;
+    const timeLimit = APP_CONFIG.QUESTION_TIME_SECONDS * 1000;
+
+    function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+          .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+          .replace(/'/g,"&#039;");
+    }
+
+    function getTodayStartISO() {
+        // The app uses the device's local midnight. For Sri Lanka, keep the
+        // device timezone on Asia/Colombo for the exact 12:00 AM reset.
+        const d = new Date();
+        d.setHours(0,0,0,0);
+        return d.toISOString();
+    }
+
+    function getTomorrowStartISO() {
+        const d = new Date();
+        d.setHours(0,0,0,0);
+        d.setDate(d.getDate()+1);
+        return d.toISOString();
+    }
+
+    async function loadLeaderboard() {
+        const listEl = document.getElementById('leaderboard-list');
+        if (!listEl) return;
+        listEl.innerHTML = '<li class="leaderboard-item"><span>🏆 Leaderboard Loading...</span></li>';
+
+        try {
+            let query = supabaseClient
+                .from('leaderboard')
+                .select('name,grade,score,created_at')
+                .order('score', { ascending:false })
+                .limit(5);
+
+            if (APP_CONFIG.DAILY_LEADERBOARD) {
+                query = query.gte('created_at', getTodayStartISO())
+                           .lt('created_at', getTomorrowStartISO());
+            }
+
+            let {data,error} = await query;
+
+            // If created_at is missing in an old table, use the normal top-5 query.
+            if (error) {
+                const fallback = await supabaseClient
+                    .from('leaderboard')
+                    .select('name,grade,score')
+                    .order('score', {ascending:false})
+                    .limit(5);
+                data = fallback.data;
+                error = fallback.error;
+            }
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                listEl.innerHTML =
+                    '<li class="leaderboard-item"><span>🚀 අද තවම Score නැහැ!</span></li>';
+                return;
+            }
+
+            listEl.innerHTML = data.map((item,index)=>{
+                const medal = index===0?'🥇':index===1?'🥈':index===2?'🥉':'⭐';
+                return `<li class="leaderboard-item">
+                    <span>${medal} ${escapeHtml(item.name||'Anonymous')} · Gr.${escapeHtml(item.grade||'-')}</span>
+                    <b>${Number(item.score)||0} pts</b>
+                </li>`;
+            }).join('');
+        } catch(err) {
+            console.error('Leaderboard load error:',err);
+            listEl.innerHTML =
+                '<li class="leaderboard-item"><span>⚠️ Leaderboard connection error</span></li>';
+        }
+    }
+
+    loadLeaderboard();
+
+    function generateBasicQuestion() {
+        document.getElementById('basic-step').innerText = basicStep;
+        let n1=Math.floor(Math.random()*10)+1, n2=Math.floor(Math.random()*10)+1;
+        let ans=n1+n2;
+        basicAnswer=Math.random()>=0.5;
+        let shownAns=basicAnswer?ans:ans+(Math.random()>0.5?1:-1);
+        if(!basicAnswer && shownAns===ans) shownAns+=1;
+        document.getElementById('basic-equation').innerText=`${n1} + ${n2} = ${shownAns}`;
+    }
+
+    function checkBasicAnswer(userAns) {
+        if (userAns===basicAnswer) playSound('correct'); else playSound('wrong');
+        if (basicStep<3) { basicStep++; generateBasicQuestion(); }
+        else {
+            document.getElementById('basic-screen').classList.add('hidden');
+            document.getElementById('info-screen').classList.remove('hidden');
+        }
+    }
+
+    function submitInfo() {
+        userName=document.getElementById('user-name').value.trim();
+        userPhone=document.getElementById('user-phone').value.trim();
+        if(!userName || !userPhone || userPhone.length<9) {
+            alert("කරුණාකර නම සහ නිවැරදි WhatsApp අංකය ලබාදෙන්න!");
+            return;
+        }
+        selectedGrade=document.getElementById('user-grade').value;
+        selectedType=document.getElementById('user-type').value;
+        document.getElementById('display-grade').innerText=selectedGrade;
+        const form=document.getElementById('lead-form');
+        const formData=new FormData(form);
+        fetch('/',{method:'POST',body:formData}).catch(e=>console.log(e));
+
+        document.getElementById('info-screen').classList.add('hidden');
+        document.getElementById('play-screen').classList.remove('hidden');
+        score=0; currentQuestionNumber=0; gameEnded=false;
+        document.getElementById('score').innerText=score;
+        nextQuestion();
+    }
+
+    function makeOptions(correct, pool) {
+        const options = [String(correct)];
+        const candidates = [];
+
+        if (typeof correct === 'number') {
+            const base = Number(correct);
+            const deltas = [1,-1,2,-2,5,-5,10,-10,0.5,-0.5];
+            deltas.forEach(d=>{
+                const v=base+d;
+                if(v!==base) candidates.push(Number.isInteger(v)?v:Math.round(v*100)/100);
+            });
+            pool.forEach(x=>{
+                if(typeof x.a==='number' && x.a!==base) candidates.push(x.a);
+            });
+        } else {
+            pool.forEach(x=>{
+                if(String(x.a)!==String(correct)) candidates.push(String(x.a));
+            });
+            ["ඔව්","නැත","සමමිති අක්ෂය","තියුණු කෝණය","මන්ද කෝණය","අනන්ත","1000₂","1010₂","වෙනත් පිළිතුරක්"]
+              .forEach(x=>{if(x!==String(correct)) candidates.push(x)});
+        }
+
+        [...new Set(candidates.map(String))].forEach(v=>{
+            if(options.length<4 && !options.includes(v)) options.push(v);
+        });
+
+        // Always produce four choices when possible.
+        while(options.length<4) options.push(String(options.length+1));
+        return options.sort(()=>Math.random()-0.5);
+    }
+
+    function nextQuestion() {
+        if(gameEnded) return;
+        clearInterval(timerInterval);
+
+        const bank=examQuestions[String(selectedGrade)] || examQuestions["6"];
+        if(!bank.length){ gameOver("ප්‍රශ්න නැහැ"); return; }
+
+        if(APP_CONFIG.QUESTIONS_PER_GAME>0 &&
+           currentQuestionNumber>=APP_CONFIG.QUESTIONS_PER_GAME){
+            gameOver("Game Complete");
+            return;
+        }
+
+        currentQuestionNumber++;
+        currentQuestion=bank[Math.floor(Math.random()*bank.length)];
+        currentOptions=makeOptions(currentQuestion.a,bank);
+
+        document.getElementById('question-number').innerText=currentQuestionNumber;
+        document.getElementById('question-topic').innerText=`📚 ${currentQuestion.lesson}`;
+        document.getElementById('equation').innerText=currentQuestion.q;
+        document.getElementById('answer-message').innerText='';
+        document.getElementById('answer-message').className='answer-message';
+
+        const grid=document.getElementById('answer-options');
+        grid.innerHTML=currentOptions.map((opt,i)=>`
+            <button type="button" class="answer-btn" data-answer="${escapeHtml(String(opt))}">
+                ${String.fromCharCode(65+i)}. ${escapeHtml(opt)}
+            </button>`).join('');
+
+        startTimer();
+    }
+
+    function startTimer() {
+        const timerEl=document.getElementById('timer');
+        const secondsEl=document.getElementById('timer-seconds');
+        timerEl.style.width='100%';
+        const start=Date.now();
+
+        timerInterval=setInterval(()=>{
+            const elapsed=Date.now()-start;
+            const remaining=Math.max(0,timeLimit-elapsed);
+            const seconds=Math.ceil(remaining/1000);
+            timerEl.style.width=(remaining/timeLimit*100)+'%';
+            secondsEl.innerText=seconds;
+
+            if(remaining<=0){
+                clearInterval(timerInterval);
+                playSound('wrong');
+                gameOver("⏰ කාලය අවසන්!");
+            }
+        },50);
+    }
+
+    function checkAnswer(userAnswer) {
+        if(gameEnded) return;
+        clearInterval(timerInterval);
+        document.querySelectorAll('.answer-btn').forEach(b=>b.disabled=true);
+
+        const correct=String(userAnswer)===String(currentQuestion.a);
+        if(correct){
+            playSound('correct');
+            score++;
+            document.getElementById('score').innerText=score;
+            document.getElementById('answer-message').innerText='✅ හරි! ඊළඟ ප්‍රශ්නය...';
+            document.getElementById('answer-message').className='answer-message good';
+            setTimeout(()=>{if(!gameEnded) nextQuestion();},350);
+        }else{
+            playSound('wrong');
+            document.getElementById('answer-message').innerText='❌ වැරදියි! Game Over.';
+            document.getElementById('answer-message').className='answer-message bad';
+            document.getElementById('play-screen').classList.add('game-over-flash');
+            setTimeout(()=>document.getElementById('play-screen').classList.remove('game-over-flash'),450);
+            setTimeout(()=>gameOver("❌ වැරදි පිළිතුර!"),450);
+        }
+    }
+
+    async function gameOver(reason="Game Over") {
+        if(gameEnded) return;
+        gameEnded=true;
+        clearInterval(timerInterval);
+
+        document.getElementById('final-score').innerText=score;
+        document.getElementById('final-score-field').value=score;
+
+        if(score>0 && userName){
+            try{
+                const {error}=await supabaseClient.from('leaderboard').insert([{
+                    name:userName, grade:selectedGrade, score:score
+                }]);
+                if(error) console.error('Leaderboard save error:',error);
+            }catch(err){ console.error('Leaderboard save exception:',err); }
+            await loadLeaderboard();
+        }
+
+        let rank="ගණිත ආධුනිකයා 📘";
+        if(score>15) rank="ගණිත විශාරද 🥇";
+        else if(score>8) rank="ගණිත ශූරයා 🏆";
+        else if(score>3) rank="ගණිත තරුව 🌟";
+        document.getElementById('rank-badge').innerText=rank;
+        document.querySelector('#over-screen h2').innerText=`Game Over! ${reason}`;
+
+        document.getElementById('play-screen').classList.add('hidden');
+        document.getElementById('over-screen').classList.remove('hidden');
+    }
+
+    function restartGame() {
+        document.getElementById('over-screen').classList.add('hidden');
+        document.getElementById('play-screen').classList.remove('hidden');
+        score=0; currentQuestionNumber=0; gameEnded=false;
+        document.getElementById('score').innerText=score;
+        nextQuestion();
+    }
+
+    function showTimetable() {
+        document.getElementById('basic-screen').classList.add('hidden');
+        document.getElementById('over-screen').classList.add('hidden');
+        document.getElementById('timetable-screen').classList.remove('hidden');
+    }
+
+    function hideTimetable() {
+        document.getElementById('timetable-screen').classList.add('hidden');
+        document.getElementById('basic-screen').classList.remove('hidden');
+    }
+
+    function showAIScreen(){
+        document.getElementById('basic-screen').classList.add('hidden');
+        document.getElementById('over-screen').classList.add('hidden');
+        document.getElementById('ai-screen').classList.remove('hidden');
+        initNotes();
+    }
+    function hideAIScreen(){
+        document.getElementById('ai-screen').classList.add('hidden');
+        document.getElementById('basic-screen').classList.remove('hidden');
+    }
+    function setAIPrompt(text){ document.getElementById('ai-prompt').value=text; document.getElementById('ai-prompt').focus(); }
+    function initNotes(){
+        const g=document.getElementById('notes-grade');
+        if(g && !g.options.length) g.innerHTML=Object.keys(STUDY_NOTES).map(x=>`<option value="${x}">${x} වසර</option>`).join('');
+        renderNotes();
+    }
+    function renderNotes(){
+        const g=document.getElementById('notes-grade').value || '6';
+        const t=document.getElementById('notes-term').value || '1';
+        const rows=(STUDY_NOTES[g] && STUDY_NOTES[g][t]) || [];
+        document.getElementById('notes-list').innerHTML=rows.map(r=>`<div class="notes-item"><h4>${escapeHtml(r[0])}</h4><p>${escapeHtml(r[1])}</p></div>`).join('') || '<div class="notes-item">මෙම වාරයට notes තව දමා නැහැ.</div>';
+    }
+    async function askMathAI(){
+        const prompt=document.getElementById('ai-prompt').value.trim();
+        const grade=document.getElementById('ai-grade').value;
+        const status=document.getElementById('ai-status');
+        const answer=document.getElementById('ai-answer');
+        if(!prompt){ status.textContent='ප්‍රශ්නයක් ලියන්න.'; return; }
+        if(prompt.length>AI_CONFIG.MAX_CHARS){ status.textContent=`කරුණාකර අකුරු ${AI_CONFIG.MAX_CHARS}ට අඩු කරන්න.`; return; }
+        status.textContent='🤖 AI ගණිත ගුරු සිතමින්...'; answer.textContent='';
+        try{
+            const res=await fetch(AI_CONFIG.FUNCTION_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({grade,prompt,language:AI_CONFIG.LANGUAGE})});
+            const data=await res.json().catch(()=>({}));
+            if(!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+            answer.textContent=data.answer || 'පිළිතුරක් ලැබුණේ නැහැ.';
+            status.textContent='✅ පිළිතුර ලැබුණා.';
+        }catch(e){
+            console.error(e);
+            status.textContent='⚠️ AI සම්බන්ධතාවය සකස් කරලා නැහැ. Supabase Edge Function එක deploy කරලා URL එක AI_CONFIG.FUNCTION_URL එකට දාන්න.';
+            answer.textContent='AI එකට සම්බන්ධ වීමට server-side API function එකක් අවශ්‍යයි. Gemini API key එක HTML code එකට දාන්න එපා.';
+        }
+    }
+
+    // Reliable touch/click handling for answer buttons.
+    document.getElementById('answer-options').addEventListener('click', function(e){
+        const btn=e.target.closest('.answer-btn');
+        if(!btn || btn.disabled) return;
+        checkAnswer(btn.dataset.answer || btn.getAttribute('data-answer'));
+    });
+    document.getElementById('answer-options').addEventListener('touchend', function(e){
+        const btn=e.target.closest('.answer-btn');
+        if(!btn || btn.disabled) return;
+        e.preventDefault();
+        checkAnswer(btn.dataset.answer || btn.getAttribute('data-answer'));
+    }, {passive:false});
+
+
 </script>
-</body></html>
+</body>
+</html>
+Share:    ⚠ Report
